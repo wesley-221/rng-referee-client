@@ -12,16 +12,24 @@ import { Observable } from 'rxjs';
 })
 
 export class MappoolService {
-	private readonly firebaseUrl: string = "https://axs-calculator-2f0ab.firebaseio.com/mappool.json";
+	// private readonly firebaseUrl: string = "https://axs-calculator-2f0ab.firebaseio.com/mappool.json";
+	private readonly mappoolUrl: string = "http://localhost:8080/mappools";
 	creationMappool: Mappool;
 
 	allMappools: Mappool[] = [];
 	availableMappoolId: number = 0;
 
+	allMappoolsFromBackend: Mappool[] = [];
+
   	constructor(private storeService: StoreService, private httpClient: HttpClient) {
 		this.creationMappool = new Mappool();
 
 		const storeAllMappools = storeService.get('cache.mappool');
+
+		this.getAllMappools().subscribe(test => {
+			console.log(test);
+		});
+
 
 		// Loop through all the mappools
 		for(let mappool in storeAllMappools) {
@@ -31,6 +39,17 @@ export class MappoolService {
 			this.availableMappoolId = newMappool.id + 1;
 			this.allMappools.push(newMappool);
 		}
+	}
+
+	/**
+	 * Get all mappools from the backend
+	 */
+	public getAllMappools() {
+		return this.httpClient.get(`${this.mappoolUrl}/get`);
+	}
+
+	public updateMappool(mappool: Mappool) {
+		return this.httpClient.post(`${this.mappoolUrl}/update`, mappool);
 	}
 
 	/**
@@ -59,20 +78,20 @@ export class MappoolService {
 		this.storeService.set(`cache.mappool.${mappool.id}`, mappool.convertToJson());
 	}
 
-	/**
-	 * Update the mappool with the given id
-	 * @param mappool the mappool to update
-	 */
-	public updateMappool(mappool: Mappool): void {
-		for(let i in this.allMappools) {
-			if(this.allMappools[i].id == mappool.id) {
-				this.allMappools[i] = mappool;
+	// /**
+	//  * Update the mappool with the given id
+	//  * @param mappool the mappool to update
+	//  */
+	// public updateMappool(mappool: Mappool): void {
+	// 	for(let i in this.allMappools) {
+	// 		if(this.allMappools[i].id == mappool.id) {
+	// 			this.allMappools[i] = mappool;
 
-				this.storeService.set(`cache.mappool.${mappool.id}`, mappool.convertToJson());
-				return;
-			}
-		}
-	}
+	// 			this.storeService.set(`cache.mappool.${mappool.id}`, mappool.convertToJson());
+	// 			return;
+	// 		}
+	// 	}
+	// }
 
 	/**
 	 * Delete the mappool in the store and service
@@ -95,15 +114,15 @@ export class MappoolService {
 	 * Get a published mappool by the published_id
 	 * @param publish_id the id of the mappool that was published
 	 */
-	public getPublishedMappool(publish_id: string): Observable<Mappool> {
-		return this.httpClient.get<Mappool>(this.firebaseUrl).pipe(
-			map((data: any) => {
-				if(data.hasOwnProperty(publish_id)) {
-					return Mappool.serializeJson(data[publish_id]) 
-				}
+	// public getPublishedMappool(publish_id: string): Observable<Mappool> {
+	// 	return this.httpClient.get<Mappool>(this.firebaseUrl).pipe(
+	// 		map((data: any) => {
+	// 			if(data.hasOwnProperty(publish_id)) {
+	// 				return Mappool.serializeJson(data[publish_id]) 
+	// 			}
 				
-				return undefined;
-			})
-		);
-	}
+	// 			return undefined;
+	// 		})
+	// 	);
+	// }
 }

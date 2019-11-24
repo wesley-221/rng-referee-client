@@ -52,18 +52,18 @@ export class MappoolOverviewComponent implements OnInit {
 	 * Import a mappool from the entered publish_id
 	 */
 	importMappool() {
-		this.mappoolService.getPublishedMappool(this.mappoolPublishId).subscribe(data => {
-			if(data) {
-				const newMappool = data;
-				newMappool.id = this.mappoolService.availableMappoolId;
+		// this.mappoolService.getPublishedMappool(this.mappoolPublishId).subscribe(data => {
+		// 	if(data) {
+		// 		const newMappool = data;
+		// 		newMappool.id = this.mappoolService.availableMappoolId;
 	
-				this.mappoolService.saveMappool(newMappool);
+		// 		this.mappoolService.saveMappool(newMappool);
 
-				this.toastService.addToast(`Imported the mappool "${newMappool.name}".`);
-			}
-			else {
-				this.toastService.addToast(`Unable to import the mappool with the publish id "${this.mappoolPublishId}".`);
-			}
-		});
+		// 		this.toastService.addToast(`Imported the mappool "${newMappool.name}".`);
+		// 	}
+		// 	else {
+		// 		this.toastService.addToast(`Unable to import the mappool with the publish id "${this.mappoolPublishId}".`);
+		// 	}
+		// });
 	}
 }
