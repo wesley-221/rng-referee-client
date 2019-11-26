@@ -17,6 +17,7 @@ function createWindow() {
 		height: size.height,
 		webPreferences: {
 			nodeIntegration: true,
+			webSecurity: false
 		},
 		frame: false,
 		titleBarStyle: 'hidden',
