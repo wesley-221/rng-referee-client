@@ -9,7 +9,11 @@ export class Mappool {
     modifiers: {} = {};
     allBeatmaps: any[] = [];
 
-    constructor() {}
+    constructor(id: number, publish_id: string, name: string) {
+        this.id = id;
+        this.publish_id = publish_id;
+        this.name = name;
+    }
 
     /**
      * Get all the mod brackets
@@ -73,11 +77,8 @@ export class Mappool {
      * @param mappool the mappool
      */
     public static makeTrueCopy(mappool: Mappool): Mappool {
-        const newMappool = new Mappool();
+        const newMappool = new Mappool(mappool.id, mappool.publish_id, mappool.name);
 
-        newMappool.id = mappool.id;
-        newMappool.publish_id = mappool.publish_id;
-        newMappool.name = mappool.name;
         newMappool.modBrackets = mappool.modBrackets;
         newMappool.modifiers = mappool.modifiers;
 
@@ -105,11 +106,7 @@ export class Mappool {
      */
     public static serializeJson(json: any): Mappool {
         const 	thisMappool = json, 
-                newMappool = new Mappool();
-
-        newMappool.id = thisMappool.id
-        newMappool.publish_id = thisMappool.publish_id;
-        newMappool.name = thisMappool.name;
+                newMappool = new Mappool(thisMappool.id, thisMappool.publish_id, thisMappool.name);
 
         // Loop through all the brackets in the current mappool
         for(let bracket in thisMappool.brackets) {

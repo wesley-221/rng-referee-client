@@ -6,6 +6,7 @@ import { ModBracketMap } from '../../../models/osu-mappool/mod-bracket-map';
 import { GetBeatmap } from '../../../services/osu-api/get-beatmap.service';
 import { ElectronService } from '../../../services/electron.service';
 import { ToastService } from '../../../services/toast.service';
+import { Gamemodes } from '../../../models/osu-models/osu-api';
 
 @Component({
 	selector: 'app-mappool-create',
@@ -15,7 +16,7 @@ import { ToastService } from '../../../services/toast.service';
 
 export class MappoolCreateComponent implements OnInit {
 	creationMappool: Mappool;
-	gamemodeId: number;
+	gamemodeId: Gamemodes;
 
 	constructor(public electronService: ElectronService, private mappoolService: MappoolService, private getBeatmap: GetBeatmap, private toastService: ToastService) { 
 		this.creationMappool = mappoolService.creationMappool;
@@ -73,7 +74,7 @@ export class MappoolCreateComponent implements OnInit {
 	 */
 	createMappool() {
 		this.creationMappool.publish_id = Mappool.generatePublishToken();
-		this.mappoolService.saveMappool(this.creationMappool);
+		this.mappoolService.createMappool(this.creationMappool);
 		this.toastService.addToast(`Successfully created the mappool "${this.creationMappool.name}"!`);
 	}
 

@@ -10,6 +10,10 @@ public class ModBracket {
 	private String mods;
 	private ArrayList<ModBracketMap> beatmaps;
 
+	public ModBracket() {
+		super();
+	}
+
 	public ModBracket(int id, String bracketName, String mods) {
 		this.id = id;
 		this.bracketName = bracketName;

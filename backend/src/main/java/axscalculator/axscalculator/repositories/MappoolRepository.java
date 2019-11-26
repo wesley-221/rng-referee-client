@@ -7,6 +7,6 @@ import java.util.List;
 public interface MappoolRepository {
 	List<Mappool> getAll();
 	Mappool getById(int id);
-	boolean delete(int id);
+	boolean delete(String publish_id);
 	Mappool save(Mappool mappool);
 }

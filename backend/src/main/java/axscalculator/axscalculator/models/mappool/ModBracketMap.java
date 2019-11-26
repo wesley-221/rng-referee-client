@@ -7,6 +7,10 @@ public class ModBracketMap {
 	private int modifier;
 	private Gamemode gamemodeId;
 
+	public ModBracketMap() {
+	    super();
+    }
+
 	public ModBracketMap(int beatmapId, String beatmapName, String beatmapUrl, int modifier, Gamemode gamemodeId) {
 		this.beatmapId = beatmapId;
 		this.beatmapName = beatmapName;

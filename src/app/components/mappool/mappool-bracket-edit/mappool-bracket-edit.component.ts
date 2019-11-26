@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ErrorHandler } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Mappool } from '../../../models/osu-mappool/mappool';
 import { ModBracket } from '../../../models/osu-mappool/mod-bracket';
@@ -38,11 +38,8 @@ export class MappoolBracketEditComponent implements OnInit {
 	 */
 	saveBracket(bracket: ModBracket) {
 		this.selectedMappool.modBrackets[bracket.id] = bracket;
+		this.mappoolService.updateMappool(this.selectedMappool);
 		
-		this.mappoolService.updateMappool(this.selectedMappool).subscribe(test => {
-			console.log(test);
-		});
-
 		this.toastService.addToast(`Successfully updated the bracket "${bracket.bracketName}" from the mappool "${this.selectedMappool.name}".`);
 	}
 

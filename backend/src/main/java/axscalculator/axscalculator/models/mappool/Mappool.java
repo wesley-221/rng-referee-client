@@ -1,7 +1,5 @@
 package axscalculator.axscalculator.models.mappool;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import java.util.ArrayList;
 
 public class Mappool {
@@ -9,6 +7,10 @@ public class Mappool {
 	private String publish_id;
 	private String name;
 	private ArrayList<ModBracket> modBrackets;
+
+	public Mappool() {
+		super();
+	}
 
 	public Mappool(long id, String publish_id, String name) {
 		this.id = id;

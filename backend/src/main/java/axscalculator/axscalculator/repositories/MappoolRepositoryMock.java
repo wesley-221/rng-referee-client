@@ -37,6 +37,8 @@ public class MappoolRepositoryMock implements MappoolRepository {
 		mappool1.addBracket(modBracket2);
 
 		this.mappools.add(mappool1);
+
+		this.lastId ++;
 	}
 
 	/**
@@ -69,13 +71,13 @@ public class MappoolRepositoryMock implements MappoolRepository {
 
 	/**
 	 * Delete a mappool with the given id
-	 * @param id
+	 * @param publish_id
 	 * @return
 	 */
 	@Override
-	public boolean delete(int id) {
+	public boolean delete(String publish_id) {
 		for(Mappool mappool : this.mappools) {
-			if(mappool.getId() == id) {
+			if(mappool.getPublish_id().equals(publish_id)) {
 				return this.mappools.remove(mappool);
 			}
 		}
@@ -90,19 +92,18 @@ public class MappoolRepositoryMock implements MappoolRepository {
 	 */
 	@Override
 	public Mappool save(Mappool mappool) {
-		if(mappool.getId() > 0) {
-			for(Mappool getMappool : this.mappools) {
-				if(getMappool.getId() == mappool.getId()) {
-					return this.mappools.set(this.mappools.indexOf(getMappool), mappool);
-				}
-			}
-		}
-		else {
-			mappool.setId(this.lastId);
-			this.mappools.add(mappool);
+        // Save the mappool if it already exists
+        for(Mappool getMappool : this.mappools) {
+            if(getMappool.getId() == mappool.getId()) {
+                return this.mappools.set(this.mappools.indexOf(getMappool), mappool);
+            }
+        }
 
-			this.lastId ++;
-		}
+        // Create a new mappool
+        mappool.setId(this.lastId);
+        this.mappools.add(mappool);
+
+        this.lastId ++;
 
 		return mappool;
 	}

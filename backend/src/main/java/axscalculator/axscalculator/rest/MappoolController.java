@@ -26,4 +26,9 @@ public class MappoolController {
 	public Mappool updateMappool(@RequestBody Mappool mappool) {
 		return this.mappoolRepository.save(mappool);
 	}
+
+	@DeleteMapping("/mappools/delete/{publish_id}")
+    public boolean deleteMappool(@PathVariable String publish_id) {
+	    return this.mappoolRepository.delete(publish_id);
+    }
 }
