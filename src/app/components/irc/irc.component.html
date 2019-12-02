@@ -118,6 +118,28 @@
                     </div>
                 </div>
 
+                <div class="row mt-2">
+                    <div class="col">
+                        <h6>Captains</h6>
+
+                        <div class="row">
+                            <div class="col">
+                                <select class="form-control">
+                                    <option value=""></option>
+        
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <select class="form-control">
+                                    <option value=""></option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row mt-2" *ngIf="selectedChannel.mappool">
                     <div class="col">
                         <input type="text" class="form-control" placeholder="Search for beatmap..." [(ngModel)]="searchValue" />
@@ -141,15 +163,15 @@
                                 <div class="btn btn-danger" (click)="banBeatmap(beatmap, bracket)">Ban</div>
                             </div>
     
-                        <div class="beatmap-pick">
+                            <div class="beatmap-pick">
                                 <button class="btn btn-primary" (click)="pickBeatmapPopup(beatmap, bracket)">Pick</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="modal fade" id="join-channel" tabindex="-1" role="dialog">
