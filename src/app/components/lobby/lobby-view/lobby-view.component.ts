@@ -189,12 +189,6 @@ export class LobbyViewComponent implements OnInit {
 	 * Send the final result to discord
 	 */
 	sendFinalResult() {
-		const httpOptions = {
-			headers: new HttpHeaders({
-				'Content-Type': 'multipart/form-data'
-			})
-		};
-
 		const scoreString = (this.selectedLobby.teamOneScore > this.selectedLobby.teamTwoScore) ? 
 							`**Score: ${this.selectedLobby.teamOneName}** | **${this.selectedLobby.teamOneScore}** - ${this.selectedLobby.teamTwoScore} | ${this.selectedLobby.teamTwoName}` : 
 							`**Score:** ${this.selectedLobby.teamOneName} | ${this.selectedLobby.teamOneScore} - **${this.selectedLobby.teamTwoScore}** | **${this.selectedLobby.teamTwoName}**`;
@@ -221,7 +215,7 @@ export class LobbyViewComponent implements OnInit {
 			]
 		}
 
-		this.http.post(this.selectedLobby.webhook, { "payload_json": JSON.stringify(body) }, httpOptions).subscribe(obj => {
+		this.http.post(this.selectedLobby.webhook, body, { headers: new HttpHeaders({ 'Content-type': 'application/json' })}).subscribe(obj => {
 			console.log(obj);
 		});
 	}
