@@ -174,7 +174,7 @@ export class MultiplayerLobbiesService {
 				}
 
 				const calculate = new Calculate();
-				const scoreInterface = calculate.getScoreInterface('AxS');
+				const scoreInterface = calculate.getScoreInterface('Team vs.');
 
 				scoreInterface.setTeamSize(multiplayerLobby.teamSize);
 				scoreInterface.addUserScores(multiplayerData.getPlayers());
