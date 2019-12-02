@@ -1,13 +1,13 @@
 {
-  "name": "axs-calculator",
+  "name": "rng-referee-client",
   "version": "1.8.0",
-  "description": "Referee client for AxS",
+  "description": "Referee client for RNG",
   "author": {
     "name": "Wesley"
   },
   "keywords": [
     "angular 8",
-    "axs",
+    "rng",
     "referee client"
   ],
   "main": "main.js",

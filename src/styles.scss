@@ -104,7 +104,7 @@ html, body {
 
     -webkit-app-region: drag;
 
-    background-color: $sidebar-color-hover;
+    background-color: #730101;
 
     .buttons-right {
         float: right;
@@ -131,7 +131,7 @@ html, body {
             text-align: center;
 
             &:hover {
-                background-color: darken($sidebar-color-hover, 15%);
+                background-color: darken(#730101, 15%);
                 cursor: pointer;
             }
         }

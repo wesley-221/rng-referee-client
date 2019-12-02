@@ -1,8 +1,8 @@
 # Introduction
-Welcome to the AxS calculator. With this application you can calculate the scores with the AxS score format. 
+Welcome to the RNG referee client. 
 
 # Config file
-The config file can be found in `%appdata%/AxSCalculator`. This is the only place where things will be saved.
+The config file can be found in `%appdata%/rng-referee-client`. This is the only place where things will be saved.
 
 # Compiling
 To compile the application yourself, you have to follow the following steps:
