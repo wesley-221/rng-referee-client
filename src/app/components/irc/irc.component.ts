@@ -8,6 +8,7 @@ import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 import { MappoolService } from '../../services/mappool.service';
 import { ModBracketMap } from '../../models/osu-mappool/mod-bracket-map';
 import { ModBracket } from '../../models/osu-mappool/mod-bracket';
+import { MultiplayerLobbiesService } from '../../services/multiplayer-lobbies.service';
 declare var $: any;
 
 @Component({
@@ -43,7 +44,10 @@ export class IrcComponent implements OnInit {
 	roomSettingGoingOn: boolean = false;
 	roomSettingDelay: number = 2;
 
-	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService) { 
+	popupPickedMap: ModBracketMap = new ModBracketMap();
+	popupPickedBracket: ModBracket = new ModBracket();
+
+	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, private multiplayerLobbiesServce: MultiplayerLobbiesService) { 
 		this.channels = ircService.allChannels;
 
 		this.ircService.getIsAuthenticated().subscribe(isAuthenticated => {
@@ -241,19 +245,40 @@ export class IrcComponent implements OnInit {
 	}
 
 	/**
+	 * When a map has been picked show a modal
+	 * @param beatmap 
+	 * @param bracket 
+	 */
+	pickBeatmapPopup(beatmap: ModBracketMap, bracket: ModBracket) {
+		this.popupPickedMap = beatmap;
+		this.popupPickedBracket = bracket;
+
+		$('#pick-a-map').modal('toggle');
+	}
+
+	/**
+	 * Hide the modal
+	 */
+	hideModal() {
+		$('#pick-a-map').modal('toggle');
+	}
+
+	/**
 	 * Pick a beatmap from the given bracket
 	 * @param beatmap the picked beatmap
 	 * @param bracket the bracket where the beatmap is from
 	 */
-	pickBeatmap(beatmap: ModBracketMap, bracket: ModBracket) {
-		this.ircService.sendMessage(this.selectedChannel.channelName, `!mp map ${beatmap.beatmapId} ${beatmap.gamemodeId}`);
+	pickBeatmap() {
+		this.ircService.sendMessage(this.selectedChannel.channelName, `!mp map ${this.popupPickedMap.beatmapId} ${this.popupPickedMap.gamemodeId}`);
 
 		// Reset all mods if the freemod is being enabled
-		if(bracket.mods.includes('freemod')) {
+		if(this.popupPickedBracket.mods.includes('freemod')) {
 			this.ircService.sendMessage(this.selectedChannel.channelName, '!mp mods none');
 		}
 
-		this.ircService.sendMessage(this.selectedChannel.channelName, `${bracket.mods}`);
+		this.ircService.sendMessage(this.selectedChannel.channelName, `${this.popupPickedBracket.mods}`);
+
+		$('#pick-a-map').modal('toggle');
 	}
 
 	/**

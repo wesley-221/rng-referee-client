@@ -136,14 +136,20 @@
                             {{ beatmap.beatmapName }}
                         </div>
 
+                        <div class="buttons">
+                            <div class="beatmap-ban">
+                                <div class="btn btn-danger" (click)="banBeatmap(beatmap, bracket)">Ban</div>
+                            </div>
+    
                         <div class="beatmap-pick">
-                            <button class="btn btn-primary" (click)="pickBeatmap(beatmap, bracket)">Pick</button>
+                                <button class="btn btn-primary" (click)="pickBeatmapPopup(beatmap, bracket)">Pick</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <div class="modal fade" id="join-channel" tabindex="-1" role="dialog">
@@ -166,6 +172,25 @@
                     <input id="channel-name" type="text" class="form-control mb-2" placeholder="Channel name" #channelName />
                     <button class="btn btn-primary" style="width: 100%;" (click)="joinChannel()">Attempt to join <fa-icon *ngIf="isAttemptingToJoin" [icon]="['fas', 'spinner']" [spin]="true"></fa-icon></button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pick-a-map" tabindex="-1" role="dialog">
+    <div class="modal-dialog shadow" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Pick a map</h3>
+            </div>
+
+            <div class="modal-body">
+                <p>Are you sure you want to pick the map "{{ popupPickedMap.beatmapName }}"?</p>        
+
+                <div class="float-right">
+                    <button class="btn btn-danger" (click)="hideModal()">No</button>
+                    <button class="btn btn-success" (click)="pickBeatmap()">Yes</button>
+                </div>
             </div>
         </div>
     </div>
