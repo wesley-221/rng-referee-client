@@ -44,6 +44,9 @@ export class LobbyViewComponent implements OnInit {
 				this.selectedLobby.ircConnected = true;
 			}
 
+			this.selectedLobby.teamOneSlotArray = [];
+			this.selectedLobby.teamTwoSlotArray = [];
+
 			// Setup the team arrays
 			for(let i: any = 0; i < this.selectedLobby.teamSize * 2; i ++) {
 				if(i < this.selectedLobby.teamSize) {
