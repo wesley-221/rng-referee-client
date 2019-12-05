@@ -51,7 +51,7 @@
         <button type="button" (click)="copyMatchResult()" *ngIf="!selectedLobby.ircConnected" class="btn btn-info" title="Copy match score"><fa-icon icon="copy"></fa-icon> Copy match score</button>
         <button type="button" (click)="sendMatchResult()" *ngIf="selectedLobby.ircConnected" [disabled]="!ircService.isAuthenticated" class="btn btn-info" title="Send match score to irc"><fa-icon icon="copy"></fa-icon> Send match score</button>
         &nbsp;
-        <button type="button" (click)="sendFinalResult()" class="btn btn-info" *ngIf="selectedLobby.webhook">Send final result to Discord</button>
+        <button type="button" (click)="sendFinalResult()" class="btn btn-info" *ngIf="selectedLobby.webhook" [disabled]="!ircService.isAuthenticated">Send final result to Discord</button>
     </div>
 </div>
 
