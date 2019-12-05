@@ -9,6 +9,7 @@ import { MappoolService } from '../../services/mappool.service';
 import { ModBracketMap } from '../../models/osu-mappool/mod-bracket-map';
 import { ModBracket } from '../../models/osu-mappool/mod-bracket';
 import { MultiplayerLobbiesService } from '../../services/multiplayer-lobbies.service';
+import { MultiplayerLobby } from '../../models/store-multiplayer/multiplayer-lobby';
 declare var $: any;
 
 @Component({
@@ -24,6 +25,7 @@ export class IrcComponent implements OnInit {
 
 	selectedChannel: Channel;
 	channels: Channel[];
+	selectedLobby: MultiplayerLobby;
 
 	chats: Message[] = [];
 	viewPortItems: Message[];
@@ -100,6 +102,7 @@ export class IrcComponent implements OnInit {
 		}
 		
 		this.selectedChannel = this.ircService.getChannelByName(channel);
+		this.selectedLobby = this.multiplayerLobbiesServce.getByIrcLobby(channel);
 
 		this.selectedChannel.lastActiveChannel = true;
 		this.ircService.changeLastActiveChannel(this.selectedChannel, true);
@@ -244,7 +247,10 @@ export class IrcComponent implements OnInit {
 	 * @param event 
 	 */
 	onMappoolChange(event: Event) {
-		this.ircService.getChannelByName(this.selectedChannel.channelName).mappool = this.mappoolService.getMappool((<any>event.currentTarget).value);
+		this.selectedLobby.mappool = this.mappoolService.getMappool((<any>event.currentTarget).value);
+		this.selectedLobby.mappoolId = this.mappoolService.getMappool((<any>event.currentTarget).value).id;
+
+		this.multiplayerLobbiesServce.update(this.selectedLobby);
 	}
 
 	/**

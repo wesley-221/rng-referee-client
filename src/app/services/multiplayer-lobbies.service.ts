@@ -38,6 +38,7 @@ export class MultiplayerLobbiesService {
 
 			const newLobby = new MultiplayerLobby();
 			newLobby.loadFromJson(currentLobby);
+			newLobby.mappool = this.mappoolService.getMappool(newLobby.mappoolId);
 			this.allLobbies.push(newLobby);
 
 			this.availableLobbyId = newLobby.lobbyId + 1;

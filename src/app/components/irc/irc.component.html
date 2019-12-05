@@ -111,7 +111,7 @@
                     <div class="col">
                         <h6>Mappool</h6>
     
-                        <select class="form-control" (change)="onMappoolChange($event)" [value]="selectedChannel != undefined && selectedChannel.mappool != undefined && selectedChannel.mappool.id">
+                        <select class="form-control" (change)="onMappoolChange($event)" [value]="selectedLobby != undefined && selectedLobby.mappool != undefined && selectedLobby.mappool.id">
                             <option value=""></option>
                             <option *ngFor="let mappool of mappoolService.allMappools" [value]="mappool.id">{{ mappool.name }}</option>
                         </select>
@@ -140,15 +140,15 @@
                     </div>
                 </div>
 
-                <div class="row mt-2" *ngIf="selectedChannel.mappool">
+                <div class="row mt-2" *ngIf="selectedLobby.mappool">
                     <div class="col">
                         <input type="text" class="form-control" placeholder="Search for beatmap..." [(ngModel)]="searchValue" />
                     </div>
                 </div>
             </div>
 
-            <div class="mappool" *ngIf="selectedChannel.mappool">
-                <div class="mod-bracket" *ngFor="let bracket of ( selectedChannel.mappool.modBrackets | search : searchValue )">
+            <div class="mappool" *ngIf="selectedLobby.mappool">
+                <div class="mod-bracket" *ngFor="let bracket of ( selectedLobby.mappool.modBrackets | search : searchValue )">
                     <hr />
                     <h3>{{ bracket.bracketName }}</h3>
                     <hr />
