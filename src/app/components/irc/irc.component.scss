@@ -340,6 +340,23 @@ $send-message-height: 38px;
                             &.picked {
                                 color: yellow;
                             }
+
+                            &.beatmapBanned {
+                                background-color: #730101;
+                                text-decoration: line-through;
+
+                                &:hover {
+                                    color: black;
+                                }
+                            }
+
+                            &.beatmapPicked {
+                                background-color: green;
+
+                                &:hover {
+                                    color: black;
+                                }
+                            }
                         }
 
                         .buttons {

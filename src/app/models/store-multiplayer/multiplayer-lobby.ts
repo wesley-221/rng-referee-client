@@ -21,10 +21,9 @@ export class MultiplayerLobby {
     firstPick: string;
     bestOf: number;
 
-    teamOneBanOne: number;
-    teamOneBanTwo: number;
-    teamTwoBanOne: number;
-    teamTwoBanTwo: number;
+    teamOneBans: number[] = [];
+    teamTwoBans: number[] = [];
+    picks: {} = {};
 
     mapsCountTowardScore: {} = {};
     multiplayerData: MultiplayerData[];
@@ -72,13 +71,12 @@ export class MultiplayerLobby {
         this.teamSize = json.data.teamSize;
         this.webhook = json.data.webhook;
         this.mappoolId = json.data.selectedMappoolId;
+        this.teamOneBans = json.data.teamOneBans;
+        this.teamTwoBans = json.data.teamTwoBans;
+        this.picks = json.data.picks;
        
         this.firstPick = json.data.firstPick;
         this.bestOf = json.data.bestOf;
-        this.teamOneBanOne = json.data.teamOneBanOne;
-        this.teamOneBanTwo = json.data.teamOneBanTwo;
-        this.teamTwoBanOne = json.data.teamTwoBanOne;
-        this.teamTwoBanTwo = json.data.teamTwoBanTwo;
 
         this.mapsCountTowardScore = json.countForScore;
 
@@ -143,10 +141,9 @@ export class MultiplayerLobby {
                 "selectedMappoolId": (multiplayerLobby.mappool == null) ? -1 : multiplayerLobby.mappool.id,
                 "firstPick": multiplayerLobby.firstPick,
                 "bestOf": multiplayerLobby.bestOf,
-                "teamOneBanOne": multiplayerLobby.teamOneBanOne,
-                "teamOneBanTwo": multiplayerLobby.teamOneBanTwo,
-                "teamTwoBanOne": multiplayerLobby.teamTwoBanOne,
-                "teamTwoBanTwo": multiplayerLobby.teamTwoBanTwo
+                "teamOneBans": multiplayerLobby.teamOneBans,
+                "teamTwoBans": multiplayerLobby.teamTwoBans,
+                "picks": multiplayerLobby.picks
             },
             "countForScore": { },
             "multiplayerData": { }

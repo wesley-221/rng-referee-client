@@ -274,7 +274,7 @@ export class IrcComponent implements OnInit {
 		this.popupBannedMap = beatmap;
 		this.popupBannedBracket = bracket;
 
-		$('#ban-a-map').modal('toggle');
+		this.hideModal('ban-a-map');
 	}
 
 	/**
@@ -287,8 +287,18 @@ export class IrcComponent implements OnInit {
 	/**
 	 * Ban a beatmap
 	 */
-	banBeatmap() {
+	banBeatmap(team: number) {
 		// Handle banning
+		if(team == 1) { 
+			this.selectedLobby.teamOneBans.push(this.popupBannedMap.beatmapId);
+		}
+		else if(team == 2) {
+			this.selectedLobby.teamTwoBans.push(this.popupBannedMap.beatmapId);
+		}
+
+		this.multiplayerLobbiesServce.update(this.selectedLobby);
+
+		this.hideModal('ban-a-map');
 	}
 
 	/**
@@ -304,7 +314,80 @@ export class IrcComponent implements OnInit {
 
 		this.ircService.sendMessage(this.selectedChannel.channelName, `${this.popupPickedBracket.mods}`);
 
-		$('#pick-a-map').modal('toggle');
+		this.hideModal('pick-a-map');
+	}
+
+	/**
+	 * Check if a beatmap is banned for either of the teams
+	 * @param beatmapId the beatmap to check
+	 */
+	beatmapIsBanned(beatmapId: number) {
+		return this.selectedLobby.teamOneBans.indexOf(beatmapId) > -1 || this.selectedLobby.teamTwoBans.indexOf(beatmapId) > -1;
+	}
+
+	/**
+	 * Check if a beatmap has been picked
+	 * @param beatmapId the beatmap to check
+	 */
+	beatmapIsPicked(beatmapId: number) {
+		let beatmapFound: boolean = false;
+
+		if(Object.keys(this.selectedLobby.picks).length > 0) {
+			for(let bracket in this.selectedLobby.picks) {
+				if(!this.selectedLobby.picks.hasOwnProperty(bracket))
+					break;
+	
+				if(this.selectedLobby.picks[bracket].indexOf(beatmapId) > -1) {
+					beatmapFound = true;
+					break;
+				}
+			}
+		}
+
+		return beatmapFound;
+	}
+
+	/**
+	 * Pick a map from a given bracket
+	 * @param bracket the bracket to pick from
+	 */
+	pickRandomMap(bracket: ModBracket) {
+		let randomMap: ModBracketMap = null;
+		const lobbyModPicks = this.selectedLobby.picks.hasOwnProperty(bracket.bracketName) ? this.selectedLobby.picks[bracket.bracketName] : null;
+
+		do {
+			const map = bracket.beatmaps[Math.floor(Math.random() * bracket.beatmaps.length)];
+
+			if((this.selectedLobby.teamOneBans.length + this.selectedLobby.teamTwoBans.length + (lobbyModPicks != null ? lobbyModPicks.length : 0)) == bracket.beatmaps.length) {
+				break;
+			}
+
+			if(!this.beatmapIsBanned(map.beatmapId) && !this.beatmapIsPicked(map.beatmapId)) {
+				randomMap = map;
+			}
+		}
+		while(randomMap == null);
+
+		if(randomMap != null) {
+			if(!this.selectedLobby.picks.hasOwnProperty(bracket.bracketName)) 
+				this.selectedLobby.picks[bracket.bracketName] = [];
+
+
+			this.selectedLobby.picks[bracket.bracketName].push(randomMap.beatmapId);
+			this.multiplayerLobbiesServce.update(this.selectedLobby);
+	
+			this.ircService.sendMessage(this.selectedChannel.channelName, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
+	
+			// Reset all mods if the freemod is being enabled
+			if(bracket.mods.includes('freemod')) {
+				this.ircService.sendMessage(this.selectedChannel.channelName, '!mp mods none');
+			}
+	
+			this.ircService.sendMessage(this.selectedChannel.channelName, `${bracket.mods}`);
+		}
+		else {
+			this.ircService.sendMessage(this.selectedChannel.channelName, `There are no more maps left in ${bracket.bracketName}.`);
+		}
 	}
 
 	/**

@@ -151,20 +151,21 @@
                 <div class="mod-bracket" *ngFor="let bracket of ( selectedLobby.mappool.modBrackets | search : searchValue )">
                     <hr />
                     <h3>{{ bracket.bracketName }}</h3>
+                    <button class="btn btn-primary" (click)="pickRandomMap(bracket)">Random pick</button>
                     <hr />
 
                     <div class="map" *ngFor="let beatmap of bracket.beatmaps">
-                        <div class="name" (click)="electronService.openLink(beatmap.beatmapUrl)">
+                        <div class="name" (click)="electronService.openLink(beatmap.beatmapUrl)" [ngClass]="{'beatmapBanned': beatmapIsBanned(beatmap.beatmapId), 'beatmapPicked': beatmapIsPicked(beatmap.beatmapId)}">
                             {{ beatmap.beatmapName }}
                         </div>
 
                         <div class="buttons">
                             <div class="beatmap-ban">
-                                <div class="btn btn-danger" (click)="banBeatmapPopup(beatmap, bracket)">Ban</div>
+                                <button class="btn btn-danger" (click)="banBeatmapPopup(beatmap, bracket)" [disabled]="beatmapIsBanned(beatmap.beatmapId) || beatmapIsPicked(beatmap.beatmapId)">Ban</button>
                             </div>
     
                             <div class="beatmap-pick">
-                                <button class="btn btn-primary" (click)="pickBeatmapPopup(beatmap, bracket)">Pick</button>
+                                <button class="btn btn-primary" (click)="pickBeatmapPopup(beatmap, bracket)" [disabled]="beatmapIsBanned(beatmap.beatmapId) || beatmapIsPicked(beatmap.beatmapId)">Pick</button>
                             </div>
                         </div>
                     </div>
@@ -210,7 +211,7 @@
                 <p>Are you sure you want to pick the map "{{ popupPickedMap.beatmapName }}"?</p>        
 
                 <div class="float-right">
-                    <button class="btn btn-danger" (click)="hideModal('pick-a-map')">No</button>
+                    <button class="btn btn-danger mr-2" (click)="hideModal('pick-a-map')">No</button>
                     <button class="btn btn-success" (click)="pickBeatmap()">Yes</button>
                 </div>
             </div>
@@ -226,11 +227,12 @@
             </div>
 
             <div class="modal-body">
-                <p>Are you sure you want to ban the map "{{ popupBannedMap.beatmapName }}"?</p>        
+                <p>Select the team that wants to ban "{{ popupBannedMap.beatmapName }}".</p>
 
                 <div class="float-right">
-                    <button class="btn btn-danger" (click)="hideModal('ban-a-map')">No</button>
-                    <button class="btn btn-success" (click)="banBeatmap()">Yes</button>
+                    <button class="btn btn-danger mr-2" (click)="hideModal('ban-a-map')">Cancel</button>
+                    <button class="btn btn-success mr-2" (click)="banBeatmap(1)" *ngIf="selectedLobby">{{ selectedLobby.teamOneName }}</button>
+                    <button class="btn btn-success" (click)="banBeatmap(2)" *ngIf="selectedLobby">{{ selectedLobby.teamTwoName }}</button>
                 </div>
             </div>
         </div>

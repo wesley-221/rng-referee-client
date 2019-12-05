@@ -193,27 +193,44 @@ export class LobbyViewComponent implements OnInit {
 							`**Score: ${this.selectedLobby.teamOneName}** | **${this.selectedLobby.teamOneScore}** - ${this.selectedLobby.teamTwoScore} | ${this.selectedLobby.teamTwoName}` : 
 							`**Score:** ${this.selectedLobby.teamOneName} | ${this.selectedLobby.teamOneScore} - **${this.selectedLobby.teamTwoScore}** | **${this.selectedLobby.teamTwoName}**`;
 		
+		let teamOneBans: any[] = [],
+			teamTwoBans: any[] = [];
+
+		for(let ban of this.selectedLobby.teamOneBans) {
+			teamOneBans.push(`[${this.getBeatmapnameFromMappools(ban).beatmapName}](${this.getBeatmapnameFromMappools(ban).beatmapUrl})`);
+		}
+
+		for(let ban of this.selectedLobby.teamTwoBans) {
+			teamTwoBans.push(`[${this.getBeatmapnameFromMappools(ban).beatmapName}](${this.getBeatmapnameFromMappools(ban).beatmapUrl})`);
+		}
+
 		const body = {
 			"embeds": [
 				{
 					"title": `Result of **${this.selectedLobby.teamOneName}** vs. **${this.selectedLobby.teamTwoName}**`,
 					"description": `${scoreString} \n\n**First pick**: ${this.selectedLobby.firstPick} \n\n[${this.selectedLobby.multiplayerLink}](${this.selectedLobby.multiplayerLink})`,
 					"color": 15258703,
+					"timestamp": new Date(),
+					"footer": {
+						"text": `Match referee was ${this.ircService.authenticatedUser}`
+					},
 					"fields": [
 						{
 							"name": `**${this.selectedLobby.teamOneName}** bans:`,
-							"value": `[${this.getBeatmapnameFromMappools(this.selectedLobby.teamOneBanOne).beatmapName}](${this.getBeatmapnameFromMappools(this.selectedLobby.teamOneBanOne).beatmapUrl}) \n[${this.getBeatmapnameFromMappools(this.selectedLobby.teamOneBanTwo).beatmapName}](${this.getBeatmapnameFromMappools(this.selectedLobby.teamOneBanTwo).beatmapUrl})`,
+							"value": teamOneBans.join('\n'),
 							"inline": true
 						},
 						{
 							"name": `**${this.selectedLobby.teamTwoName}** bans:`,
-							"value": `[${this.getBeatmapnameFromMappools(this.selectedLobby.teamTwoBanOne).beatmapName}](${this.getBeatmapnameFromMappools(this.selectedLobby.teamTwoBanOne).beatmapUrl}) \n[${this.getBeatmapnameFromMappools(this.selectedLobby.teamTwoBanTwo).beatmapName}](${this.getBeatmapnameFromMappools(this.selectedLobby.teamTwoBanTwo).beatmapUrl})`,
+							"value": teamTwoBans.join('\n'),
 							"inline": true
 						}
 					]
 				}
 			]
 		}
+
+		console.log(body);
 
 		this.http.post(this.selectedLobby.webhook, body, { headers: new HttpHeaders({ 'Content-type': 'application/json' })}).subscribe(obj => {
 			console.log(obj);
