@@ -46,6 +46,9 @@ export class IrcComponent implements OnInit {
 
 	popupPickedMap: ModBracketMap = new ModBracketMap();
 	popupPickedBracket: ModBracket = new ModBracket();
+	
+	popupBannedMap: ModBracketMap = new ModBracketMap();
+	popupBannedBracket: ModBracket = new ModBracket();
 
 	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, private multiplayerLobbiesServce: MultiplayerLobbiesService) { 
 		this.channels = ircService.allChannels;
@@ -245,7 +248,7 @@ export class IrcComponent implements OnInit {
 	}
 
 	/**
-	 * When a map has been picked show a modal
+	 * When trying to pick a map show a modal
 	 * @param beatmap 
 	 * @param bracket 
 	 */
@@ -257,16 +260,33 @@ export class IrcComponent implements OnInit {
 	}
 
 	/**
+	 * When trying to ban a map show a modal
+	 * @param beatmap 
+	 * @param bracket 
+	 */
+	banBeatmapPopup(beatmap: ModBracketMap, bracket: ModBracket) {
+		this.popupBannedMap = beatmap;
+		this.popupBannedBracket = bracket;
+
+		$('#ban-a-map').modal('toggle');
+	}
+
+	/**
 	 * Hide the modal
 	 */
-	hideModal() {
-		$('#pick-a-map').modal('toggle');
+	hideModal(modalName: string) {
+		$(`#${modalName}`).modal('toggle');
+	}
+
+	/**
+	 * Ban a beatmap
+	 */
+	banBeatmap() {
+		// Handle banning
 	}
 
 	/**
 	 * Pick a beatmap from the given bracket
-	 * @param beatmap the picked beatmap
-	 * @param bracket the bracket where the beatmap is from
 	 */
 	pickBeatmap() {
 		this.ircService.sendMessage(this.selectedChannel.channelName, `!mp map ${this.popupPickedMap.beatmapId} ${this.popupPickedMap.gamemodeId}`);

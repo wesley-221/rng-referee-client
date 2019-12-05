@@ -160,7 +160,7 @@
 
                         <div class="buttons">
                             <div class="beatmap-ban">
-                                <div class="btn btn-danger" (click)="banBeatmap(beatmap, bracket)">Ban</div>
+                                <div class="btn btn-danger" (click)="banBeatmapPopup(beatmap, bracket)">Ban</div>
                             </div>
     
                             <div class="beatmap-pick">
@@ -210,8 +210,27 @@
                 <p>Are you sure you want to pick the map "{{ popupPickedMap.beatmapName }}"?</p>        
 
                 <div class="float-right">
-                    <button class="btn btn-danger" (click)="hideModal()">No</button>
+                    <button class="btn btn-danger" (click)="hideModal('pick-a-map')">No</button>
                     <button class="btn btn-success" (click)="pickBeatmap()">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ban-a-map" tabindex="-1" role="dialog">
+    <div class="modal-dialog shadow" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ban a map</h3>
+            </div>
+
+            <div class="modal-body">
+                <p>Are you sure you want to ban the map "{{ popupBannedMap.beatmapName }}"?</p>        
+
+                <div class="float-right">
+                    <button class="btn btn-danger" (click)="hideModal('ban-a-map')">No</button>
+                    <button class="btn btn-success" (click)="banBeatmap()">Yes</button>
                 </div>
             </div>
         </div>
