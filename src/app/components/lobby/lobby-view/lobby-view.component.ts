@@ -249,36 +249,6 @@ export class LobbyViewComponent implements OnInit {
 	}
 
 	/**
-	 * Change the mappool for the selected lobby
-	 * @param event the event that is triggered
-	 */
-	changeMappool(event: any) {
-		this.multiplayerLobbies.get(this.selectedLobby.lobbyId).mappoolId = event.target.value;
-		this.multiplayerLobbies.get(this.selectedLobby.lobbyId).mappool = this.mappoolService.getMappool(event.target.value);
-
-		this.selectedLobby.mappool = this.mappoolService.getMappool(event.target.value);
-		this.selectedLobby.mappoolId = event.target.value;
-
-		this.multiplayerLobbies.update(this.selectedLobby);
-	}
-
-	/**
-	 * Get the mappool id of the selected lobby
-	 */
-	getMappoolId() {
-		if(this.selectedLobby.mappool == null) {
-			if(this.selectedLobby.mappoolId != null) {
-				return this.selectedLobby.mappoolId;
-			}
-		}
-		else {
-			return this.selectedLobby.mappool.id;
-		}
-		
-		return -1;
-	}
-
-	/**
 	 * Get the modifier for the given beatmapid 
 	 * @param beatmapId the beatmapid to get the modifier for
 	 */
@@ -370,18 +340,6 @@ export class LobbyViewComponent implements OnInit {
 		}
 		else if(element == 'bestOf') {
 			this.selectedLobby.bestOf = (<any>event.currentTarget).value;
-		}
-		else if(element == 'teamOneBanOne') {
-			this.selectedLobby.teamOneBanOne = (<any>event.currentTarget).value;
-		}
-		else if(element == 'teamOneBanTwo') {
-			this.selectedLobby.teamOneBanTwo = (<any>event.currentTarget).value;
-		}
-		else if(element == 'teamTwoBanOne') {
-			this.selectedLobby.teamTwoBanOne = (<any>event.currentTarget).value;
-		}
-		else if(element == 'teamTwoBanTwo') {
-			this.selectedLobby.teamTwoBanTwo = (<any>event.currentTarget).value;
 		}
 
 		this.multiplayerLobbies.update(this.selectedLobby);
