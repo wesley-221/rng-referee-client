@@ -72,11 +72,6 @@
                 </div>
             </div>
 
-            <div class="mapModifier" *ngIf="selectedLobby.mapsCountTowardScore[match.game_id] == true">
-                <div class="alert alert-danger" *ngIf="getModifier(match.beatmap_id) == null"><fa-icon [icon]="['fas', 'exclamation-triangle']"></fa-icon> There was no modifier set for this map. Have you selected a mappool yet?</div>
-                <h6 *ngIf="getModifier(match.beatmap_id) != null">Beatmap modifier: {{ getModifier(match.beatmap_id) }}</h6>
-            </div>
-
             <div class="mapModifier" *ngIf="selectedLobby.mapsCountTowardScore[match.game_id] == false">
                 <div class="alert alert-warning"><fa-icon [icon]="['fas', 'exclamation-triangle']"></fa-icon> This map does not count towards the team score (could be a warmup map/invalid score)</div>
             </div>

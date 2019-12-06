@@ -62,12 +62,8 @@
             <div class="beatmaps">
                 <div class="beatmap mb-2" *ngFor="let beatmap of bracket.getBeatmaps()">
                     <div class="row">
-                        <div class="col-2">
+                        <div class="col-4">
                             <input type="text" class="form-control" [(ngModel)]="beatmap.beatmapId" placeholder="Beatmap id" />
-                        </div>
-
-                        <div class="col-2">
-                            <input type="text" class="form-control" [(ngModel)]="beatmap.modifier" placeholder="Modifier" />
                         </div>
 
                         <div class="col-6">
