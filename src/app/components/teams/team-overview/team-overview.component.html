@@ -1,0 +1,35 @@
+<div class="scroll">
+    <div class="row">
+        <div class="col-7">
+            <button [routerLink]="['/teams-create']" class="btn btn-primary mt-4">Create a new team</button>
+        </div>
+
+        <div class="col-5">
+            <div class="input-group mt-4">
+                <input type="text" class="form-control" placeholder="Publish id" [(ngModel)]="teamPublishId" />
+        
+                <div class="input-group-append">
+                    <button class="btn btn-primary" (click)="importTeams()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr />
+
+    <div class="team" *ngFor="let team of teamService.allTeams" (click)="editTeam(team)">
+        <div class="row">
+            <div class="col-9">
+                <h1>{{ team.teamName }}</h1>
+
+                <div class="player" *ngFor="let player of team.getPlayers()">{{ player.username }}</div>
+            </div>
+
+            <div class="col-3">
+                <div class="btn-group float-right">
+                    <button class="btn btn-danger" (click)="deleteTeam(team)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

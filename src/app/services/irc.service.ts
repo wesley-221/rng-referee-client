@@ -11,6 +11,7 @@ import { MessageBuilder, MessageType } from '../models/irc/message-builder';
 import { MultiplayerLobbiesService } from './multiplayer-lobbies.service';
 import { Misc } from '../models/misc';
 import { ModBracket } from '../models/osu-mappool/mod-bracket';
+import { TeamService } from './team.service';
 
 @Injectable({
   	providedIn: 'root'
@@ -42,7 +43,7 @@ export class IrcService {
 	// Indicates if the multiplayerlobby is being created for "Create a lobby" route
 	isCreatingMultiplayerLobby: number = -1;
 
-  	constructor(private toastService: ToastService, private storeService: StoreService, private multiplayerLobbiesService: MultiplayerLobbiesService) { 
+  	constructor(private toastService: ToastService, private storeService: StoreService, private multiplayerLobbiesService: MultiplayerLobbiesService, private teamService: TeamService) { 
 		this.irc = require('irc-upd');
 
 		// Create observables for is(Dis)Connecting
@@ -311,41 +312,86 @@ export class IrcService {
 							modBracketString: string[] = [];
 
 						// Check if a captain used the command
-						// TODO: check for the pick order
+
+						const totalMapsPlayed = multiplayerLobby.teamOneScore + multiplayerLobby.teamTwoScore;
+						let allowedToPick = false,
+							teamPick: string, 
+							teamCaptain: string;
+
+						// Check the pick order
+						if(totalMapsPlayed % 2 == 0) {
+							if(this.teamService.getTeamByName(multiplayerLobby.firstPick).getPlayersAsArray().indexOf(from) > -1) {
+								allowedToPick = true;
+							}
+
+							teamPick = multiplayerLobby.firstPick;
+							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamOneCaptain : multiplayerLobby.teamTwoCaptain;
+						}
+						else {
+							if(this.teamService.getTeamByName(multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName).getPlayersAsArray().indexOf(from) > -1) {
+								allowedToPick = true;
+							}
+
+							teamPick = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName;
+							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoCaptain : multiplayerLobby.teamOneCaptain;
+						}
+
+						// Check if a captain is selected
+						if(teamCaptain == "" || !teamCaptain) {
+							teamCaptain = "No captain selected";
+							this.toastService.addToast(`There is no captain selected for one of the teams. Set a captain for the teams so that they can continue with the picks.`, ToastType.Error, 15);
+						}
+
+						// Check if the message came from a captain
 						if(from == multiplayerLobby.teamOneCaptain || from == multiplayerLobby.teamTwoCaptain) {
-							// Find the appropriate bracket and create a string with all available brackets
-							for(let bracket of multiplayerLobby.mappool.modBrackets) {
-								if(bracket.bracketName == userPicksMap.bracket) {
-									modBracket = bracket;
-								}
-
-								modBracketString.push(bracket.bracketName);
+							// Check if the map has been played 
+							if(Object.keys(multiplayerLobby.picks).length > (multiplayerLobby.teamOneScore + multiplayerLobby.teamTwoScore)) {
+								this.sendMessage(to, `You haven't finished (or started) playing the selected map yet.`);
 							}
-
-							// The bracket was found
-							if(modBracket != null) {
-								const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
-
-								// Mappool bracket still has a map available
-								if(randomMap != null) {
-									this.sendMessage(to, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
-							
-									// Reset all mods if the freemod is being enabled
-									if(modBracket.mods.includes('freemod')) {
-										this.sendMessage(to, '!mp mods none');
-									}
-							
-									this.sendMessage(to, `${modBracket.mods}`);
-								}
-								// No maps left
-								else {
-									this.sendMessage(to, `There are no more maps left in ${modBracket.bracketName}.`);
-								}
-							}
-							// Invalid mappool bracket
 							else {
-								this.sendMessage(to, `Invalid modbracket given. Available mod brackets: ${modBracketString.join(', ')}.`);
+								// Check if the captain is allowed to pick the map
+								if(allowedToPick) {
+									// Find the appropriate bracket and create a string with all available brackets
+									for(let bracket of multiplayerLobby.mappool.modBrackets) {
+										if(bracket.bracketName.toLowerCase() == userPicksMap.bracket.toLowerCase()) {
+											modBracket = bracket;
+										}
+	
+										modBracketString.push(bracket.bracketName);
+									}
+	
+									// The bracket was found
+									if(modBracket != null) {
+										const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
+	
+										// Mappool bracket still has a map available
+										if(randomMap != null) {
+											this.sendMessage(to, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
+									
+											// Reset all mods if the freemod is being enabled
+											if(modBracket.mods.includes('freemod')) {
+												this.sendMessage(to, '!mp mods none');
+											}
+									
+											this.sendMessage(to, `${modBracket.mods}`);
+										}
+										// No maps left
+										else {
+											this.sendMessage(to, `There are no more maps left in ${modBracket.bracketName}.`);
+										}
+									}
+									// Invalid mappool bracket
+									else {
+										this.sendMessage(to, `Invalid modbracket given. Available mod brackets: ${modBracketString.join(', ')}.`);
+									}
+								}
+								else {
+									this.sendMessage(to, `It is not your turn to pick, ${from}. The next pick is for ${teamPick} (${teamCaptain}).`);
+								}
 							}
+						}
+						else {
+							this.sendMessage(to, `${from}, you are not a captain of either team.`);
 						}
 					}
 				}
