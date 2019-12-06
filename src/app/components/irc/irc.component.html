@@ -151,21 +151,21 @@
                 <div class="mod-bracket" *ngFor="let bracket of ( selectedLobby.mappool.modBrackets | search : searchValue )">
                     <hr />
                     <h3>{{ bracket.bracketName }}</h3>
-                    <button class="btn btn-primary" (click)="pickRandomMap(bracket)">Random pick</button>
+                    <button class="btn btn-primary" (click)="pickRandomMap(multiplayerLobbiesServce, selectedLobby, bracket, selectedChannel.channelName)">Random pick</button>
                     <hr />
 
                     <div class="map" *ngFor="let beatmap of bracket.beatmaps">
-                        <div class="name" (click)="electronService.openLink(beatmap.beatmapUrl)" [ngClass]="{'beatmapBanned': beatmapIsBanned(beatmap.beatmapId), 'beatmapPicked': beatmapIsPicked(beatmap.beatmapId)}">
+                        <div class="name" (click)="electronService.openLink(beatmap.beatmapUrl)" [ngClass]="{'beatmapBanned': beatmapIsBanned(selectedLobby, beatmap.beatmapId), 'beatmapPicked': beatmapIsPicked(selectedLobby, beatmap.beatmapId)}">
                             {{ beatmap.beatmapName }}
                         </div>
 
                         <div class="buttons">
                             <div class="beatmap-ban">
-                                <button class="btn btn-danger" (click)="banBeatmapPopup(beatmap, bracket)" [disabled]="beatmapIsBanned(beatmap.beatmapId) || beatmapIsPicked(beatmap.beatmapId)">Ban</button>
+                                <button class="btn btn-danger" (click)="banBeatmapPopup(beatmap, bracket)" [disabled]="beatmapIsBanned(selectedLobby, beatmap.beatmapId) || beatmapIsPicked(selectedLobby, beatmap.beatmapId)">Ban</button>
                             </div>
     
                             <div class="beatmap-pick">
-                                <button class="btn btn-primary" (click)="pickBeatmapPopup(beatmap, bracket)" [disabled]="beatmapIsBanned(beatmap.beatmapId) || beatmapIsPicked(beatmap.beatmapId)">Pick</button>
+                                <button class="btn btn-primary" (click)="pickBeatmapPopup(beatmap, bracket)" [disabled]="beatmapIsBanned(selectedLobby, beatmap.beatmapId) || beatmapIsPicked(selectedLobby, beatmap.beatmapId)">Pick</button>
                             </div>
                         </div>
                     </div>

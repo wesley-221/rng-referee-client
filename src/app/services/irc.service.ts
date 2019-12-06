@@ -9,6 +9,8 @@ import { Message } from '../models/irc/message';
 import { Regex } from '../models/irc/regex';
 import { MessageBuilder, MessageType } from '../models/irc/message-builder';
 import { MultiplayerLobbiesService } from './multiplayer-lobbies.service';
+import { Misc } from '../models/misc';
+import { ModBracket } from '../models/osu-mappool/mod-bracket';
 
 @Injectable({
   	providedIn: 'root'
@@ -268,6 +270,54 @@ export class IrcService {
 							this.multiplayerLobbiesService.update(this.multiplayerLobbiesService.get(this.isCreatingMultiplayerLobby));
 
 							this.isCreatingMultiplayerLobby = -1;
+						}
+					}
+				}
+			}
+			else {
+				if(to.startsWith('#mp_')) {
+					const userPicksMap = Regex.userPickMap.run(message);
+
+					// Check if "!pick" is run in a multiplayer lobby
+					if(userPicksMap) {
+						const 	multiplayerLobby = this.multiplayerLobbiesService.getByIrcLobby(to),
+								misc = new Misc();
+
+						let modBracket: ModBracket = null, 
+							modBracketString: string[] = [];
+
+						// Find the appropriate bracket and create a string with all available brackets
+						for(let bracket of multiplayerLobby.mappool.modBrackets) {
+							if(bracket.bracketName == userPicksMap.bracket) {
+								modBracket = bracket;
+							}
+
+							modBracketString.push(bracket.bracketName);
+						}
+
+						// The bracket was found
+						if(modBracket != null) {
+							const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
+
+							// Mappool bracket still has a map available
+							if(randomMap != null) {
+								this.sendMessage(to, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
+						
+								// Reset all mods if the freemod is being enabled
+								if(modBracket.mods.includes('freemod')) {
+									this.sendMessage(to, '!mp mods none');
+								}
+						
+								this.sendMessage(to, `${modBracket.mods}`);
+							}
+							// No maps left
+							else {
+								this.sendMessage(to, `There are no more maps left in ${modBracket.bracketName}.`);
+							}
+						}
+						// Invalid mappool bracket
+						else {
+							this.sendMessage(to, `Invalid modbracket given. Available mod brackets: ${modBracketString.join(', ')}.`);
 						}
 					}
 				}

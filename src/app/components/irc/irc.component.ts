@@ -10,6 +10,7 @@ import { ModBracketMap } from '../../models/osu-mappool/mod-bracket-map';
 import { ModBracket } from '../../models/osu-mappool/mod-bracket';
 import { MultiplayerLobbiesService } from '../../services/multiplayer-lobbies.service';
 import { MultiplayerLobby } from '../../models/store-multiplayer/multiplayer-lobby';
+import { Misc } from '../../models/misc';
 declare var $: any;
 
 @Component({
@@ -52,7 +53,7 @@ export class IrcComponent implements OnInit {
 	popupBannedMap: ModBracketMap = new ModBracketMap();
 	popupBannedBracket: ModBracket = new ModBracket();
 
-	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, private multiplayerLobbiesServce: MultiplayerLobbiesService) { 
+	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, public multiplayerLobbiesServce: MultiplayerLobbiesService) { 
 		this.channels = ircService.allChannels;
 
 		this.ircService.getIsAuthenticated().subscribe(isAuthenticated => {
@@ -318,75 +319,48 @@ export class IrcComponent implements OnInit {
 	}
 
 	/**
-	 * Check if a beatmap is banned for either of the teams
-	 * @param beatmapId the beatmap to check
+	 * Check if a beatmap is banned
+	 * @param multiplayerLobby 
+	 * @param beatmapId 
 	 */
-	beatmapIsBanned(beatmapId: number) {
-		return this.selectedLobby.teamOneBans.indexOf(beatmapId) > -1 || this.selectedLobby.teamTwoBans.indexOf(beatmapId) > -1;
+	beatmapIsBanned(multiplayerLobby: MultiplayerLobby, beatmapId: number) {
+		const misc = new Misc();
+		return misc.staticBeatmapIsBanned(multiplayerLobby, beatmapId);
 	}
 
 	/**
-	 * Check if a beatmap has been picked
-	 * @param beatmapId the beatmap to check
+	 * Check if a beatmap is picked
+	 * @param mutliplayerLobby 
+	 * @param beatmapId 
 	 */
-	beatmapIsPicked(beatmapId: number) {
-		let beatmapFound: boolean = false;
-
-		if(Object.keys(this.selectedLobby.picks).length > 0) {
-			for(let bracket in this.selectedLobby.picks) {
-				if(!this.selectedLobby.picks.hasOwnProperty(bracket))
-					break;
-	
-				if(this.selectedLobby.picks[bracket].indexOf(beatmapId) > -1) {
-					beatmapFound = true;
-					break;
-				}
-			}
-		}
-
-		return beatmapFound;
+	beatmapIsPicked(mutliplayerLobby: MultiplayerLobby, beatmapId: number) {
+		const misc = new Misc();
+		return misc.staticBeatmapIsPicked(mutliplayerLobby, beatmapId);
 	}
 
 	/**
-	 * Pick a map from a given bracket
-	 * @param bracket the bracket to pick from
+	 * Pick a random map 
+	 * @param multiplayerLobbyService 
+	 * @param lobby 
+	 * @param bracket 
+	 * @param ircChannelName 
 	 */
-	pickRandomMap(bracket: ModBracket) {
-		let randomMap: ModBracketMap = null;
-		const lobbyModPicks = this.selectedLobby.picks.hasOwnProperty(bracket.bracketName) ? this.selectedLobby.picks[bracket.bracketName] : null;
-
-		do {
-			const map = bracket.beatmaps[Math.floor(Math.random() * bracket.beatmaps.length)];
-
-			if((this.selectedLobby.teamOneBans.length + this.selectedLobby.teamTwoBans.length + (lobbyModPicks != null ? lobbyModPicks.length : 0)) == bracket.beatmaps.length) {
-				break;
-			}
-
-			if(!this.beatmapIsBanned(map.beatmapId) && !this.beatmapIsPicked(map.beatmapId)) {
-				randomMap = map;
-			}
-		}
-		while(randomMap == null);
+	pickRandomMap(multiplayerLobbyService: MultiplayerLobbiesService, lobby: MultiplayerLobby, bracket: ModBracket, ircChannelName: string) {
+		const misc = new Misc();
+		const randomMap = misc.staticPickRandomMap(multiplayerLobbyService, lobby, bracket, ircChannelName);
 
 		if(randomMap != null) {
-			if(!this.selectedLobby.picks.hasOwnProperty(bracket.bracketName)) 
-				this.selectedLobby.picks[bracket.bracketName] = [];
-
-
-			this.selectedLobby.picks[bracket.bracketName].push(randomMap.beatmapId);
-			this.multiplayerLobbiesServce.update(this.selectedLobby);
-	
-			this.ircService.sendMessage(this.selectedChannel.channelName, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
+			this.ircService.sendMessage(ircChannelName, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
 	
 			// Reset all mods if the freemod is being enabled
 			if(bracket.mods.includes('freemod')) {
-				this.ircService.sendMessage(this.selectedChannel.channelName, '!mp mods none');
+				this.ircService.sendMessage(ircChannelName, '!mp mods none');
 			}
 	
-			this.ircService.sendMessage(this.selectedChannel.channelName, `${bracket.mods}`);
+			this.ircService.sendMessage(ircChannelName, `${bracket.mods}`);
 		}
 		else {
-			this.ircService.sendMessage(this.selectedChannel.channelName, `There are no more maps left in ${bracket.bracketName}.`);
+			this.ircService.sendMessage(ircChannelName, `There are no more maps left in ${bracket.bracketName}.`);
 		}
 	}
 

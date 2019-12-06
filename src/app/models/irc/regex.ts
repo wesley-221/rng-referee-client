@@ -157,5 +157,18 @@ export class Regex {
         }
     }
 
+    static userPickMap = {
+        regex: /^!pick ([A-Za-z]+)$/,
+        run: (message): { bracket: string } => {
+            const userPickMap = RegExp(Regex.userPickMap.regex).exec(message);
+
+            if(userPickMap !== null) {
+                return { bracket: userPickMap[1] };
+            }
+
+            return null;
+        }
+    }
+
     // TODO: refereeBeatmapChange
 }
