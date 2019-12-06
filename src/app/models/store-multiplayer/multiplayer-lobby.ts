@@ -31,6 +31,11 @@ export class MultiplayerLobby {
     teamOneSlotArray: number[] = [];
     teamTwoSlotArray: number[] = [];
 
+    allUsers: string[] = [];
+
+    teamOneCaptain: string;
+    teamTwoCaptain: string;
+
     constructor() { 
         this.multiplayerData = [];
     }

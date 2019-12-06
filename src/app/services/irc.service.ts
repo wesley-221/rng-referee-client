@@ -226,7 +226,11 @@ export class IrcService {
 							multiplayerMatchSize = Regex.multiplayerMatchSize.run(message),
 							multiplayerSettingsChange = Regex.multiplayerSettingsChange.run(message),
 							matchClosed = Regex.closedMatch.run(message),
-							matchFinished = Regex.matchFinished.run(message);
+							matchFinished = Regex.matchFinished.run(message),
+							userJoined = Regex.userJoinedGame.run(message),
+							userLeft = Regex.userLeftGame.run(message),
+							mpSettingsUsers = Regex.mpSettingsUsers.run(message),
+							mpSettings = Regex.mpSettingsRoom.run(message);
 
 					// Initialize the channel with the correct teammode and wincondition
 					if(multiplayerInitialization != null) {
@@ -255,6 +259,26 @@ export class IrcService {
 					// A beatmap has finished
 					if(matchFinished) {
 						this.multiplayerLobbiesService.synchronizeMultiplayerMatch(this.multiplayerLobbiesService.getByIrcLobby(to));
+					}
+
+					// User has joined the lobby
+					if(userJoined) {
+						this.multiplayerLobbiesService.getByIrcLobby(to).allUsers.push(userJoined.username);
+					}
+
+					// User has left the lobby
+					if(userLeft) {
+						this.multiplayerLobbiesService.getByIrcLobby(to).allUsers.splice(this.multiplayerLobbiesService.getByIrcLobby(to).allUsers.indexOf(userLeft.username), 1);
+					}
+
+					// !mp settings was ran
+					if(mpSettings) {
+						this.multiplayerLobbiesService.getByIrcLobby(to).allUsers = [];
+					}
+
+					// A user is in the lobby
+					if(mpSettingsUsers) {
+						this.multiplayerLobbiesService.getByIrcLobby(to).allUsers.push(mpSettingsUsers.username);
 					}
 				}
 				// ===========================================
@@ -286,38 +310,42 @@ export class IrcService {
 						let modBracket: ModBracket = null, 
 							modBracketString: string[] = [];
 
-						// Find the appropriate bracket and create a string with all available brackets
-						for(let bracket of multiplayerLobby.mappool.modBrackets) {
-							if(bracket.bracketName == userPicksMap.bracket) {
-								modBracket = bracket;
-							}
-
-							modBracketString.push(bracket.bracketName);
-						}
-
-						// The bracket was found
-						if(modBracket != null) {
-							const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
-
-							// Mappool bracket still has a map available
-							if(randomMap != null) {
-								this.sendMessage(to, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
-						
-								// Reset all mods if the freemod is being enabled
-								if(modBracket.mods.includes('freemod')) {
-									this.sendMessage(to, '!mp mods none');
+						// Check if a captain used the command
+						// TODO: check for the pick order
+						if(from == multiplayerLobby.teamOneCaptain || from == multiplayerLobby.teamTwoCaptain) {
+							// Find the appropriate bracket and create a string with all available brackets
+							for(let bracket of multiplayerLobby.mappool.modBrackets) {
+								if(bracket.bracketName == userPicksMap.bracket) {
+									modBracket = bracket;
 								}
-						
-								this.sendMessage(to, `${modBracket.mods}`);
+
+								modBracketString.push(bracket.bracketName);
 							}
-							// No maps left
+
+							// The bracket was found
+							if(modBracket != null) {
+								const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
+
+								// Mappool bracket still has a map available
+								if(randomMap != null) {
+									this.sendMessage(to, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
+							
+									// Reset all mods if the freemod is being enabled
+									if(modBracket.mods.includes('freemod')) {
+										this.sendMessage(to, '!mp mods none');
+									}
+							
+									this.sendMessage(to, `${modBracket.mods}`);
+								}
+								// No maps left
+								else {
+									this.sendMessage(to, `There are no more maps left in ${modBracket.bracketName}.`);
+								}
+							}
+							// Invalid mappool bracket
 							else {
-								this.sendMessage(to, `There are no more maps left in ${modBracket.bracketName}.`);
+								this.sendMessage(to, `Invalid modbracket given. Available mod brackets: ${modBracketString.join(', ')}.`);
 							}
-						}
-						// Invalid mappool bracket
-						else {
-							this.sendMessage(to, `Invalid modbracket given. Available mod brackets: ${modBracketString.join(', ')}.`);
 						}
 					}
 				}

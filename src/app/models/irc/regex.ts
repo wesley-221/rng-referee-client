@@ -170,5 +170,50 @@ export class Regex {
         }
     }
 
+    static userLeftGame = {
+        regex: /(.+) left the game\./, 
+        run: (message): { username: string } => {
+            const userLeftGame = RegExp(Regex.userLeftGame.regex).exec(message);
+
+            if(userLeftGame !== null) {
+                return { username: userLeftGame[1] };
+            }
+
+            return null;
+        }
+    }
+
+    static userJoinedGame = {
+        regex: /(.+) joined in slot [0-9]+\./, 
+        run: (message): { username: string } => {
+            const userJoinedGame = RegExp(Regex.userJoinedGame.regex).exec(message);
+
+            if(userJoinedGame !== null) {
+                return { username: userJoinedGame[1] };
+            }
+
+            return null;
+        }
+    }
+
+    static mpSettingsUsers = {
+        regex: /Slot [0-9]+\s+(?:Ready|Not Ready|No Map)\s+https:\/\/osu.ppy.sh\/u\/[0-9]+ (.+)/, 
+        run: (message): { username: string } => {
+            const mpSettingsUsers = RegExp(Regex.mpSettingsUsers.regex).exec(message);
+
+            if(mpSettingsUsers !== null) {
+                return { username: mpSettingsUsers[1].trim() };
+            }
+
+            return null;
+        }
+    }
+
+    static mpSettingsRoom = {
+        regex: /Room name: .+/,
+        run: (message): boolean => {
+            return RegExp(Regex.mpSettingsRoom.regex).test(message);
+        }
+    }
     // TODO: refereeBeatmapChange
 }
