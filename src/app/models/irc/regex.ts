@@ -197,7 +197,7 @@ export class Regex {
     }
 
     static mpSettingsUsers = {
-        regex: /Slot [0-9]+\s+(?:Ready|Not Ready|No Map)\s+https:\/\/osu.ppy.sh\/u\/[0-9]+ (.+)/, 
+        regex: /Slot [0-9]+\s+(?:Ready|Not Ready|No Map)\s+https:\/\/osu.ppy.sh\/u\/[0-9]+ (.+)\[.+\]/, 
         run: (message): { username: string } => {
             const mpSettingsUsers = RegExp(Regex.mpSettingsUsers.regex).exec(message);
 
