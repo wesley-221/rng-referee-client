@@ -17,7 +17,7 @@
         <tr>
             <td>
                 This will export the config file and save it as a file in case you need to share it with someone. <br />
-                <b>Note:</b> It will not export the API key in the file <br />
+                <b>Note:</b> This will not export any credentials you have saved. <br />
             </td>
 
             <td>
@@ -37,11 +37,31 @@
 
         <tr>
             <td>
+                This will clear all irc messages.
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-primary form-control" (click)="clearIrc()">Clear irc messages</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
                 This will remove the API key.
             </td>
 
             <td>
                 <button type="button" class="btn btn-primary form-control" (click)="removeApiKey()">Remove API key</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                This will remove your irc credentials.
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-primary form-control" (click)="removeIrcCredentials()">Remove irc credentials</button>
             </td>
         </tr>
     </tbody>

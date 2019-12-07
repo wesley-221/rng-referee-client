@@ -56,6 +56,29 @@ export class SettingsComponent implements OnInit {
 	}
 
 	/**
+	 * Clear irc messages
+	 */
+	clearIrc() {
+		if(confirm(`Are you sure you want to clear your irc messages?`)) {
+			this.storeService.delete('irc.channels');
+
+			this.toastService.addToast(`Successfully cleared the irc messages.`);
+		}
+	}
+
+	/**
+	 * Remove the irc credentials
+	 */
+	removeIrcCredentials() {
+		if(confirm(`Are you sure you want to remove your irc credentials?`)) {
+			this.storeService.delete('irc.username');
+			this.storeService.delete('irc.password');
+
+			this.toastService.addToast(`Successfully removed your irc credentials.`);
+		}
+	}
+
+	/**
 	 * Remove the pai key
 	 */
 	removeApiKey() {
@@ -78,6 +101,7 @@ export class SettingsComponent implements OnInit {
 			let configFile = this.storeService.storage.store;
 			configFile['api-key'] = "redacted";
 			configFile['auth'] = "redacted";
+			configFile['irc'] = "redacted";
 
 			configFile = JSON.stringify(configFile, null, '\t');
 
