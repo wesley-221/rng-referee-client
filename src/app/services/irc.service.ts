@@ -259,7 +259,9 @@ export class IrcService {
 
 					// A beatmap has finished
 					if(matchFinished) {
+						setTimeout(() => {
 						this.multiplayerLobbiesService.synchronizeMultiplayerMatch(this.multiplayerLobbiesService.getByIrcLobby(to));
+						}, 1000);
 					}
 
 					// User has joined the lobby
