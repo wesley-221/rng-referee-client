@@ -23,6 +23,9 @@ export class CreateLobbyComponent implements OnInit {
 
 	ircAuthenticated: boolean = false;
 
+	teamOneArray: number[] = [];
+	teamTwoArray: number[] = [];
+
 	constructor(private multiplayerLobbies: MultiplayerLobbiesService, private toastService: ToastService, private ircService: IrcService) { 
 		ircService.getIsAuthenticated().subscribe(isAuthenticated => {
 			this.ircAuthenticated = isAuthenticated;
@@ -84,5 +87,21 @@ export class CreateLobbyComponent implements OnInit {
 
 	getValidation(key: string): any {
 		return this.validationForm.get(key);
+	}
+
+	changeTeamSize() {
+		this.teamOneArray = [];
+		this.teamTwoArray = [];
+
+		const 	teamSizeValue = parseInt(this.validationForm.get('teamSize').value),
+				teamSize = teamSizeValue > 8 ? 8 : teamSizeValue;
+
+		for(let i = 1; i < (teamSize + 1); i ++) {
+			this.teamOneArray.push(i);
+		}
+
+		for(let i = teamSize + 1; i < ((teamSize * 2) + 1); i ++) {
+			this.teamTwoArray.push(i);
+		}
 	}
 }

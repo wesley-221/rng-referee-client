@@ -50,7 +50,7 @@
                 </p>
 
                 <input formControlName="teamSize" type="text" class="form-control" placeholder="Team size" 
-                        [ngClass]="{'has-error': getValidation('teamSize').errors && (getValidation('teamSize').touched || getValidation('teamSize').dirty)  }" />
+                        [ngClass]="{'has-error': getValidation('teamSize').errors && (getValidation('teamSize').touched || getValidation('teamSize').dirty)  }" (keyup)="changeTeamSize()" />
 
                 <div class="has-error" 
                     *ngIf="getValidation('teamSize').errors && getValidation('teamSize').errors.required && 
@@ -80,7 +80,7 @@
             <div class="teamOne form-group">
                 <h2>Team one name</h2>
                 <p>
-                    Enter the name of the first team. This will be team <span class="red-text">red</span> and has slot 1, 2 and 3.
+                    Enter the name of the first team. This will be team <span class="red-text">red</span> and has slot {{ teamOneArray.join(", ") }}.
                 </p>
 
                 <input formControlName="teamOneName" type="text" class="form-control" placeholder="Team one name" 
@@ -96,7 +96,7 @@
             <div class="teamTwo form-group">
                 <h2>Team two name</h2>
                 <p>
-                    Enter the name of the second team. This will be team <span class="blue-text">blue</span> and has slot 4, 5 and 6.
+                    Enter the name of the second team. This will be team <span class="blue-text">blue</span> and has slot {{ teamTwoArray.join(", ") }}.
                 </p>
 
                 <input formControlName="teamTwoName" type="text" class="form-control" placeholder="Team two name"
