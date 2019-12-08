@@ -28,8 +28,8 @@ export class TeamCreateComponent implements OnInit {
 
 	createTeam() {
 		this.teamService.addTeam(this.teamCreate);
-		this.teamCreate = new Team();
-
 		this.toastService.addToast(`Successfully created the team "${this.teamCreate.teamName}" with a total of ${this.teamCreate.getPlayers().length} player(s).`);
+
+		this.teamCreate = new Team();
 	}
 }
