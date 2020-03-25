@@ -347,7 +347,13 @@ export class IrcService {
 						// Check if the message came from a captain
 						if(from == multiplayerLobby.teamOneCaptain || from == multiplayerLobby.teamTwoCaptain) {
 							// Check if the map has been played 
-							if(Object.keys(multiplayerLobby.picks).length > (multiplayerLobby.teamOneScore + multiplayerLobby.teamTwoScore)) {
+							let totalMapsPicked = 0;
+
+							for(let bracket in multiplayerLobby.picks) {
+								totalMapsPicked += multiplayerLobby.picks[bracket].length;
+							}
+
+							if(totalMapsPicked > (multiplayerLobby.teamOneScore + multiplayerLobby.teamTwoScore)) {
 								this.sendMessage(to, `You haven't finished (or started) playing the selected map yet.`);
 							}
 							else {

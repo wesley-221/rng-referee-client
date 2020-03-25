@@ -12,9 +12,7 @@ import { Router } from '@angular/router';
 export class TeamOverviewComponent implements OnInit {
 	teamPublishId: number;
 
-	constructor(public teamService: TeamService, private toastService: ToastService, private router: Router) { 
-		console.log(teamService)
-	}
+	constructor(public teamService: TeamService, private toastService: ToastService, private router: Router) { }
 
 	ngOnInit() { }
 
