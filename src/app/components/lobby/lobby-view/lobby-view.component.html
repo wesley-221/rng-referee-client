@@ -10,6 +10,7 @@
 
             <div class="col-5">
                 <div class="btn-group float-right">
+					<button class="btn btn-primary" (click)="goToIrc()"><fa-icon [icon]="['fas', 'comment']"></fa-icon> IRC</button>
                     <button class="btn btn-primary" (click)="settingsTabIsOpened = !settingsTabIsOpened"><fa-icon [icon]="['fas', 'cogs']"></fa-icon> Settings</button>
                     <button type="button" (click)="copyNextPick()" *ngIf="!selectedLobby.ircConnected" class="btn btn-info"><fa-icon [icon]="['far', 'envelope-open']"></fa-icon> Copy next pick</button>
                     <button type="button" (click)="sendNextPick()" *ngIf="selectedLobby.ircConnected" class="btn btn-info" [disabled]="!ircService.isAuthenticated"><fa-icon [icon]="['far', 'envelope-open']"></fa-icon> Send next pick</button>
@@ -42,7 +43,7 @@
             <div class="col">
                 <h5>Webhook</h5>
                 <input type="text" class="form-control" placeholder="Webhook" (change)="changeWebhook($event)" [value]="selectedLobby.webhook" />
-            </div>  
+            </div>
         </div>
 
         <hr />
@@ -91,7 +92,7 @@
                         <td *ngIf="match.getPlayer(slot).caption && match.getPlayer(slot).caption.length > 0">({{ match.getPlayer(slot).caption }})</td>
                     </tr>
                 </table>
-                
+
                 <hr />
 
                 <h5>Team {{ selectedLobby.teamTwoName }}</h5>
@@ -113,7 +114,7 @@
                 <div class="blue-text">Team {{ selectedLobby.teamTwoName }} score: {{ addDot(match.team_two_score, " ") }}</div>
 
                 <br />
-                
+
                 <div *ngIf="match.team_one_score > match.team_two_score">
                     <h3><span class="red-text">Team {{ selectedLobby.teamOneName }}</span> has won.</h3><span class="red-text">Team {{ selectedLobby.teamOneName }}</span> score: {{ addDot(match.team_one_score, " ")}} | <span class="blue-text">Team {{ selectedLobby.teamTwoName }}</span> score: {{ addDot(match.team_two_score, " ") }} | Score difference: {{ addDot(match.team_one_score - match.team_two_score, " ") }}
                 </div>
@@ -129,5 +130,5 @@
             <button type="button" class="btn btn-primary" (click)="copyBeatmapResult(match)" *ngIf="!selectedLobby.ircConnected">Copy result</button>
         </div>
     </div>
-    
+
 </div>

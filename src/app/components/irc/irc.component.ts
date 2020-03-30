@@ -11,6 +11,8 @@ import { ModBracket } from '../../models/osu-mappool/mod-bracket';
 import { MultiplayerLobbiesService } from '../../services/multiplayer-lobbies.service';
 import { MultiplayerLobby } from '../../models/store-multiplayer/multiplayer-lobby';
 import { Misc } from '../../models/misc';
+import { ToastService } from '../../services/toast.service';
+import { Router } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -49,11 +51,11 @@ export class IrcComponent implements OnInit {
 
 	popupPickedMap: ModBracketMap = new ModBracketMap();
 	popupPickedBracket: ModBracket = new ModBracket();
-	
+
 	popupBannedMap: ModBracketMap = new ModBracketMap();
 	popupBannedBracket: ModBracket = new ModBracket();
 
-	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, public multiplayerLobbiesServce: MultiplayerLobbiesService) { 
+	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, public multiplayerLobbiesServce: MultiplayerLobbiesService, private toastService: ToastService, private router: Router) {
 		this.channels = ircService.allChannels;
 
 		this.ircService.getIsAuthenticated().subscribe(isAuthenticated => {
@@ -86,7 +88,7 @@ export class IrcComponent implements OnInit {
 		});
 	}
 
-	ngOnInit() { 
+	ngOnInit() {
 		this.ircService.getIsJoiningChannel().subscribe(value => {
 			this.isAttemptingToJoin = value;
 		});
@@ -101,7 +103,7 @@ export class IrcComponent implements OnInit {
 			this.selectedChannel.lastActiveChannel = false;
 			this.ircService.changeLastActiveChannel(this.selectedChannel, false);
 		}
-		
+
 		this.selectedChannel = this.ircService.getChannelByName(channel);
 		this.selectedLobby = this.multiplayerLobbiesServce.getByIrcLobby(channel);
 
@@ -109,7 +111,7 @@ export class IrcComponent implements OnInit {
 		this.ircService.changeLastActiveChannel(this.selectedChannel, true);
 
 		this.selectedChannel.hasUnreadMessages = false;
-		
+
 		this.chats = this.selectedChannel.allMessages;
 
 		// Scroll to the bottom - delay it by 500 ms or do it instantly
@@ -171,7 +173,7 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * Drop a channel to rearrange it
-	 * @param event 
+	 * @param event
 	 */
 	dropChannel(event: CdkDragDrop<Channel[]>) {
 		moveItemInArray(this.channels, event.previousIndex, event.currentIndex);
@@ -181,7 +183,7 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * When a key was pressed
-	 * @param event 
+	 * @param event
 	 * @param eventName up or down (for key up/down)
 	 */
 	onKey(event: KeyboardEvent, eventName: string) {
@@ -245,7 +247,7 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * Change the current mappool
-	 * @param event 
+	 * @param event
 	 */
 	onMappoolChange(event: Event) {
 		this.selectedLobby.mappool = this.mappoolService.getMappool((<any>event.currentTarget).value);
@@ -256,8 +258,8 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * When trying to pick a map show a modal
-	 * @param beatmap 
-	 * @param bracket 
+	 * @param beatmap
+	 * @param bracket
 	 */
 	pickBeatmapPopup(beatmap: ModBracketMap, bracket: ModBracket) {
 		this.popupPickedMap = beatmap;
@@ -268,8 +270,8 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * When trying to ban a map show a modal
-	 * @param beatmap 
-	 * @param bracket 
+	 * @param beatmap
+	 * @param bracket
 	 */
 	banBeatmapPopup(beatmap: ModBracketMap, bracket: ModBracket) {
 		this.popupBannedMap = beatmap;
@@ -290,7 +292,7 @@ export class IrcComponent implements OnInit {
 	 */
 	banBeatmap(team: number) {
 		// Handle banning
-		if(team == 1) { 
+		if(team == 1) {
 			this.selectedLobby.teamOneBans.push(this.popupBannedMap.beatmapId);
 		}
 		else if(team == 2) {
@@ -320,8 +322,8 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * Check if a beatmap is banned
-	 * @param multiplayerLobby 
-	 * @param beatmapId 
+	 * @param multiplayerLobby
+	 * @param beatmapId
 	 */
 	beatmapIsBanned(multiplayerLobby: MultiplayerLobby, beatmapId: number) {
 		const misc = new Misc();
@@ -330,8 +332,8 @@ export class IrcComponent implements OnInit {
 
 	/**
 	 * Check if a beatmap is picked
-	 * @param mutliplayerLobby 
-	 * @param beatmapId 
+	 * @param mutliplayerLobby
+	 * @param beatmapId
 	 */
 	beatmapIsPicked(mutliplayerLobby: MultiplayerLobby, beatmapId: number) {
 		const misc = new Misc();
@@ -339,11 +341,11 @@ export class IrcComponent implements OnInit {
 	}
 
 	/**
-	 * Pick a random map 
-	 * @param multiplayerLobbyService 
-	 * @param lobby 
-	 * @param bracket 
-	 * @param ircChannelName 
+	 * Pick a random map
+	 * @param multiplayerLobbyService
+	 * @param lobby
+	 * @param bracket
+	 * @param ircChannelName
 	 */
 	pickRandomMap(multiplayerLobbyService: MultiplayerLobbiesService, lobby: MultiplayerLobby, bracket: ModBracket, ircChannelName: string) {
 		const misc = new Misc();
@@ -351,12 +353,12 @@ export class IrcComponent implements OnInit {
 
 		if(randomMap != null) {
 			this.ircService.sendMessage(ircChannelName, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
-	
+
 			// Reset all mods if the freemod is being enabled
 			if(bracket.mods.includes('freemod')) {
 				this.ircService.sendMessage(ircChannelName, '!mp mods none');
 			}
-	
+
 			this.ircService.sendMessage(ircChannelName, `${bracket.mods}`);
 		}
 		else {
@@ -369,7 +371,7 @@ export class IrcComponent implements OnInit {
 	 */
 	onRoomSettingChange() {
 		if(!this.roomSettingGoingOn) {
-			let timer = 
+			let timer =
 			setInterval(() => {
 				if(this.roomSettingDelay == 0) {
 					this.ircService.sendMessage(this.selectedChannel.channelName, `!mp set ${this.teamMode.nativeElement.value} ${this.winCondition.nativeElement.value} ${this.players.nativeElement.value}`);
@@ -387,7 +389,18 @@ export class IrcComponent implements OnInit {
 
 			this.roomSettingGoingOn = true;
 		}
-		
-		this.roomSettingDelay = 3;	
+
+		this.roomSettingDelay = 3;
+	}
+
+	navigateLobbyOverview() {
+		const lobbyId = this.multiplayerLobbiesServce.getByIrcLobby(this.selectedChannel.channelName).lobbyId;
+
+		if(lobbyId != null) {
+			this.router.navigate(['lobby-view', lobbyId]);
+		}
+		else {
+			this.toastService.addToast(`No lobby overview found for this irc channel`);
+		}
 	}
 }
