@@ -5,6 +5,8 @@ import { ToastService } from '../../../services/toast.service';
 import { ToastType } from '../../../models/toast';
 import { IrcService } from '../../../services/irc.service';
 import { ElectronService } from '../../../services/electron.service';
+import { RegisterRequest } from '../../../models/authentication/register-request';
+import { LoggedInUser } from '../../../models/authentication/logged-in-user';
 
 @Component({
 	selector: 'app-login',
@@ -17,12 +19,12 @@ export class LoginComponent implements OnInit {
 
 	isConnecting: boolean = false;
 	isDisconnecting: boolean = false;
-	
-	constructor(private auth: AuthenticateService, private toastService: ToastService, public ircService: IrcService, public electronService: ElectronService) { }
+
+	constructor(public auth: AuthenticateService, private toastService: ToastService, public ircService: IrcService, public electronService: ElectronService) { }
 
 	ngOnInit() {
 		this.mappoolPublishForm = new FormGroup({
-			'email': new FormControl('', [
+			'username': new FormControl('', [
 				Validators.required
 			]),
 			'password': new FormControl('', [
@@ -51,24 +53,46 @@ export class LoginComponent implements OnInit {
 	}
 
 	/**
-	 * Login the user with the given email and password
+	 * Login the user with the given username and password
 	 */
 	loginMappoolPublish() {
-		const 	email = this.mappoolPublishForm.get('email').value, 
+		const 	username = this.mappoolPublishForm.get('username').value,
 				password = this.mappoolPublishForm.get('password').value;
 
-		this.auth.login(email, password).then(res => {
-			this.toastService.addToast(`Successfully logged in with the email "${this.auth.loggedInUser}"!`);
-		}).catch((err: Error) => {
-			this.toastService.addToast(`Something went wrong while trying to login: "${err.message}"`, ToastType.Error);
+		const registerUser = new RegisterRequest();
+
+		registerUser.username = username;
+		registerUser.password = password;
+
+		this.auth.login(registerUser).subscribe(data => {
+			const loggedInUser: LoggedInUser = new LoggedInUser();
+
+			loggedInUser.userId = data.body.userId;
+			loggedInUser.username = data.body.username;
+			loggedInUser.isAdmin = data.body.admin;
+			loggedInUser.token = data.headers.get('Authorization');
+
+			this.auth.loggedInUser = loggedInUser;
+			this.auth.loggedIn = true;
+
+			this.auth.cacheLoggedInUser(loggedInUser);
+
+			this.toastService.addToast(`Successfully logged in with the username "${this.auth.loggedInUser.username}"!`);
+		}, (err) => {
+			this.toastService.addToast(`${err.error.message}`, ToastType.Error);
 		});
+	}
+
+	logoutMappoolPublish() {
+		this.auth.logout();
+		this.toastService.addToast(`Successfully logged out.`);
 	}
 
 	/**
 	 * Login to irc with the given credentials
 	 */
 	connectIrc() {
-		const 	username = this.ircForm.get('username').value, 
+		const 	username = this.ircForm.get('username').value,
 				password = this.ircForm.get('password').value;
 
 		this.ircService.connect(username, password);

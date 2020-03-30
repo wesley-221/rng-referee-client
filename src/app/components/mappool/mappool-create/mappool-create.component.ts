@@ -15,9 +15,8 @@ import { ToastService } from '../../../services/toast.service';
 
 export class MappoolCreateComponent implements OnInit {
 	creationMappool: Mappool;
-	gamemodeId: number;
 
-	constructor(public electronService: ElectronService, private mappoolService: MappoolService, private getBeatmap: GetBeatmap, private toastService: ToastService) { 
+	constructor(public electronService: ElectronService, private mappoolService: MappoolService, private getBeatmap: GetBeatmap, private toastService: ToastService) {
 		this.creationMappool = mappoolService.creationMappool;
 		this.creationMappool.id = mappoolService.availableMappoolId;
 	}
@@ -37,7 +36,6 @@ export class MappoolCreateComponent implements OnInit {
 	 */
 	addBeatmap(bracket: ModBracket) {
 		const newBracket = new ModBracketMap();
-		newBracket.gamemodeId = this.gamemodeId;
 
 		bracket.addBeatmap(newBracket);
 	}
@@ -72,7 +70,6 @@ export class MappoolCreateComponent implements OnInit {
 	 * Create the mappool from the creationMappool object
 	 */
 	createMappool() {
-		this.creationMappool.publish_id = Mappool.generatePublishToken();
 		this.mappoolService.saveMappool(this.creationMappool);
 		this.toastService.addToast(`Successfully created the mappool "${this.creationMappool.name}"!`);
 	}
@@ -83,5 +80,12 @@ export class MappoolCreateComponent implements OnInit {
 	 */
 	collapseBracket(bracket: ModBracket) {
 		bracket.collapsed = !bracket.collapsed;
+	}
+
+	/**
+	 * Change the gamemode of the mappool
+	 */
+	changeGamemode(event) {
+		this.creationMappool.gamemodeId = event.target.value;
 	}
 }

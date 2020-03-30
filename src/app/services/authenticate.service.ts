@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
+import { HttpClient } from '@angular/common/http';
+import { RegisterRequest } from '../models/authentication/register-request';
+import { AppConfig } from '../../environments/environment';
+import { Observable } from 'rxjs';
+import { LoggedInUser } from '../models/authentication/logged-in-user';
 import { StoreService } from './store.service';
 
 @Injectable({
@@ -8,26 +11,25 @@ import { StoreService } from './store.service';
 })
 
 export class AuthenticateService {
-	public loggedInUser: string = "Guest";
+	private readonly apiUrl = AppConfig.apiUrl;
+	public loggedInUser: LoggedInUser;
 	public loggedIn: boolean = false;
-	public token: string;
 
-  	constructor(private storeService: StoreService) {
-		this.token = storeService.get('auth.token');
+  	constructor(private httpClient: HttpClient, private storeService: StoreService) {
+		const userCredentials = storeService.get('auth');
 
-		firebase.auth().onAuthStateChanged(user => {
-			// Valid user found
-			if(user) {
-				this.loggedInUser = user.email;
-				this.loggedIn = true;
-			}
-			// No valid user found
-			else {
-				this.loggedInUser = "Guest";
-				this.loggedIn = false;
-				this.token = "";
-			}
-		});
+		if(userCredentials != undefined) {
+			this.loggedInUser = LoggedInUser.mapFromJson(storeService.get('auth'));
+			this.loggedIn = true;
+		}
+	}
+
+	/**
+	 * Register a new user
+	 * @param registerRequest
+	 */
+	public register(registerRequest: RegisterRequest): Observable<any> {
+		return this.httpClient.post<RegisterRequest>(`${this.apiUrl}register`, registerRequest);
 	}
 
 	/**
@@ -35,37 +37,25 @@ export class AuthenticateService {
 	 * @param email the email to login with
 	 * @param password the password to login with
 	 */
-	public login(email: string, password: string): Promise<any> {
-		return new Promise<any>((resolve, reject) => {
-			firebase.auth().signInWithEmailAndPassword(email, password).then(response => {
-				this.loggedInUser = email;
-				this.loggedIn = true;
-				firebase.auth().currentUser.getIdToken().then((token: string) => {
-					this.token = token;
-					this.storeService.set('auth.token', this.token);
-				});
-
-				this.storeService.set('auth.user', email);
-
-				resolve(response);
-			}).catch(err => {
-				reject(err);
-			});
-		});
+	public login(registerRequest: RegisterRequest): Observable<any> {
+		return this.httpClient.post<RegisterRequest>(`${this.apiUrl}login`, registerRequest, { observe: 'response' });
 	}
 
 	/**
 	 * Logout the current loggedin user
 	 */
 	public logout() {
-		return new Promise<any>((resolve, reject) => {
-			firebase.auth().signOut().then(() => {
-				this.storeService.delete('auth');
+		this.loggedIn = false;
+		this.loggedInUser = null;
 
-				resolve();
-			}).catch(err => {
-				reject(err);
-			});
-		})
+		this.storeService.delete(`auth`);
+	}
+
+	/**
+	 * Cache the data of a user
+	 * @param loggedInUser the loggedin user to cache
+	 */
+	public cacheLoggedInUser(loggedInUser: LoggedInUser) {
+		this.storeService.set(`auth`, loggedInUser.convertToJson());
 	}
 }

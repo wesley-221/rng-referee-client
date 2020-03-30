@@ -1,13 +1,14 @@
 import { ModBracket } from "./mod-bracket";
 import { ModBracketMap } from "./mod-bracket-map";
+import { Gamemodes } from "../osu-models/osu-api";
 
 export class Mappool {
     id: number = null;
-    publish_id: string = null;
     name: string;
     modBrackets: ModBracket[] = [];
     modifiers: {} = {};
     allBeatmaps: any[] = [];
+    gamemodeId: Gamemodes = Gamemodes.Osu;
 
     constructor() {}
 
@@ -32,10 +33,10 @@ export class Mappool {
     public convertToJson(): any {
         let mappool = {
             id: this.id,
-            publish_id: this.publish_id,
             name: this.name,
-            brackets: [], 
-            modifiers: {}
+            brackets: [],
+            modifiers: {},
+            gamemode: this.gamemodeId
         };
 
         for(let bracket in this.modBrackets) {
@@ -58,7 +59,8 @@ export class Mappool {
                     beatmapId: thisMap.beatmapId,
                     beatmapName: thisMap.beatmapName,
                     beatmapUrl: thisMap.beatmapUrl,
-                    modifier: thisMap.modifier
+                    modifier: thisMap.modifier,
+                    gamemode: this.gamemodeId
                 };
             }
 
@@ -76,27 +78,12 @@ export class Mappool {
         const newMappool = new Mappool();
 
         newMappool.id = mappool.id;
-        newMappool.publish_id = mappool.publish_id;
         newMappool.name = mappool.name;
         newMappool.modBrackets = mappool.modBrackets;
         newMappool.modifiers = mappool.modifiers;
+        newMappool.gamemodeId = mappool.gamemodeId;
 
         return newMappool;
-    }
-
-    /**
-     * Create a new token used for publishing a mappool
-     * @param tokenLength the length of the token
-     */
-    public static generatePublishToken(tokenLength: number = 35): string {
-        let token = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@%^&*()_+-=';
-
-        for (let i = 0; i < tokenLength; i ++ ) {
-            token += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-
-        return token;
     }
 
     /**
@@ -104,12 +91,12 @@ export class Mappool {
      * @param json the json to serialize
      */
     public static serializeJson(json: any): Mappool {
-        const 	thisMappool = json, 
+        const 	thisMappool = json,
                 newMappool = new Mappool();
 
         newMappool.id = thisMappool.id
-        newMappool.publish_id = thisMappool.publish_id;
         newMappool.name = thisMappool.name;
+        newMappool.gamemodeId = thisMappool.gamemode;
 
         // Loop through all the brackets in the current mappool
         for(let bracket in thisMappool.brackets) {
@@ -128,12 +115,13 @@ export class Mappool {
                 newBeatmap.beatmapName = thisMappool.modifiers[newBeatmap.beatmapId].beatmapName;
                 newBeatmap.beatmapUrl = thisMappool.modifiers[newBeatmap.beatmapId].beatmapUrl;
                 newBeatmap.modifier = thisMappool.modifiers[newBeatmap.beatmapId].modifier;
+                newBeatmap.gamemodeId = thisMappool.gamemode;
                 newBeatmap.invalid = false;
 
                 newBracket.addBeatmap(newBeatmap);
 
                 newMappool.modifiers[newBeatmap.beatmapId] = newBeatmap;
-                
+
                 newMappool.allBeatmaps.push({
                     beatmapId: thisBracket.beatmaps[beatmap],
                     name: thisMappool.modifiers[newBeatmap.beatmapId].beatmapName,

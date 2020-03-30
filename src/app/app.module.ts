@@ -9,9 +9,6 @@ import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common
 
 import { AppRoutingModule } from './app-routing.module';
 
-import * as firebase from 'firebase/app';
-import { AppConfig } from '../environments/environment';
-
 // NG Translate
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -44,6 +41,7 @@ import { SearchPipe } from './pipes/search.pipe';
 import { TeamOverviewComponent } from './components/teams/team-overview/team-overview.component';
 import { TeamCreateComponent } from './components/teams/team-create/team-create.component';
 import { TeamEditComponent } from './components/teams/team-edit/team-edit.component';
+import { RegisterComponent } from './components/authentication/register/register.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -52,23 +50,23 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 @NgModule({
 	declarations: [
-		AppComponent, 
-		TitlebarComponent, 
-		MainComponent, 
-		SidebarComponent, 
-		SettingsComponent, 
-		ErrorComponent, 
-		InformationComponent, 
-		ToastComponent, 
-		AllLobbiesComponent, 
-		CreateLobbyComponent, 
-		LobbyViewComponent, 
-		MappoolOverviewComponent, 
-		MappoolCreateComponent, 
-		MappoolBracketEditComponent, 
-		LoginComponent, 
-		IrcComponent, 
-		SearchPipe, TeamOverviewComponent, TeamCreateComponent, TeamEditComponent
+		AppComponent,
+		TitlebarComponent,
+		MainComponent,
+		SidebarComponent,
+		SettingsComponent,
+		ErrorComponent,
+		InformationComponent,
+		ToastComponent,
+		AllLobbiesComponent,
+		CreateLobbyComponent,
+		LobbyViewComponent,
+		MappoolOverviewComponent,
+		MappoolCreateComponent,
+		MappoolBracketEditComponent,
+		LoginComponent,
+		IrcComponent,
+		SearchPipe, TeamOverviewComponent, TeamCreateComponent, TeamEditComponent, RegisterComponent
 	],
 	imports: [
 		BrowserModule,
@@ -85,7 +83,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 		}),
 		FontAwesomeModule,
 		DragDropModule,
-		VirtualScrollerModule, 
+		VirtualScrollerModule,
 		BrowserAnimationsModule,
 		ClipboardModule
 	],
@@ -98,6 +96,5 @@ export function HttpLoaderFactory(http: HttpClient) {
 export class AppModule {
 	constructor(library: FaIconLibrary) {
 		library.addIconPacks(fas, far);
-		firebase.initializeApp(AppConfig.firebase);
 	}
 }

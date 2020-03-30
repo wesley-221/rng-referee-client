@@ -15,16 +15,18 @@ import { IrcComponent } from './components/irc/irc.component';
 import { TeamOverviewComponent } from './components/teams/team-overview/team-overview.component';
 import { TeamCreateComponent } from './components/teams/team-create/team-create.component';
 import { TeamEditComponent } from './components/teams/team-edit/team-edit.component';
+import { RegisterComponent } from './components/authentication/register/register.component';
 
 const routes: Routes = [
 	{
 		path: '',
-		component: MainComponent, 
+		component: MainComponent,
 		children: [
 			{ path: '', component: InformationComponent },
 			{ path: 'information', component: InformationComponent },
-			{ path: 'settings', component: SettingsComponent}, 
+			{ path: 'settings', component: SettingsComponent},
 			{ path: 'login', component: LoginComponent },
+			{ path: 'register', component: RegisterComponent },
 			{ path: 'lobby-overview', component: AllLobbiesComponent },
 			{ path: 'create-lobby', component: CreateLobbyComponent },
 			{ path: 'lobby-view/:id', component: LobbyViewComponent },

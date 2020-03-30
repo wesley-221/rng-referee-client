@@ -5,6 +5,8 @@ import { ModBracket } from '../../../models/osu-mappool/mod-bracket';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../services/toast.service';
 import { AuthenticateService } from '../../../services/authenticate.service';
+import { ToastType } from '../../../models/toast';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-mappool-overview',
@@ -13,7 +15,7 @@ import { AuthenticateService } from '../../../services/authenticate.service';
 })
 
 export class MappoolOverviewComponent implements OnInit {
-	mappoolPublishId: string;
+	mappoolId: string;
 
 	constructor(public mappoolService: MappoolService, private router: Router, private toastService: ToastService, public authService: AuthenticateService) { }
 	ngOnInit() { }
@@ -37,33 +39,37 @@ export class MappoolOverviewComponent implements OnInit {
 		this.router.navigate(['edit-bracket', mappool.id, bracket.id]);
 	}
 
+	canPublish() {
+		return this.authService.loggedIn && (<any>this.authService.loggedInUser.isAdmin) == 'true';
+	}
+
 	/**
-	 * Publish a mappool to firebase
+	 * Publish a mappool
 	 * @param mappool the mappool to publish
 	 */
 	publishMappool(mappool: Mappool) {
 		if(confirm(`Are you sure you want to publish "${mappool.name}"?`)) {
-			this.mappoolService.publishMappool(mappool);
-			this.toastService.addToast(`Successfully published the mappool "${mappool.name}".`);
+
+			console.log(mappool);
+
+			this.mappoolService.publishMappool(mappool).subscribe((data) => {
+				this.toastService.addToast(`Successfully published the mappool "${data.body.name}" with the id ${data.body.id}.`);
+			});
 		}
 	}
 
 	/**
-	 * Import a mappool from the entered publish_id
+	 * Import a mappool from the entered mappool id
 	 */
 	importMappool() {
-		this.mappoolService.getPublishedMappool(this.mappoolPublishId).subscribe(data => {
-			if(data) {
-				const newMappool = data;
-				newMappool.id = this.mappoolService.availableMappoolId;
-	
-				this.mappoolService.saveMappool(newMappool);
+		this.mappoolService.getPublishedMappool(this.mappoolId).subscribe((data) => {
+			const newMappool: Mappool = this.mappoolService.mapFromJson(data);
+			newMappool.id = this.mappoolService.availableMappoolId;
 
-				this.toastService.addToast(`Imported the mappool "${newMappool.name}".`);
-			}
-			else {
-				this.toastService.addToast(`Unable to import the mappool with the publish id "${this.mappoolPublishId}".`);
-			}
+			this.mappoolService.saveMappool(newMappool);
+			this.toastService.addToast(`Imported the mappool "${newMappool.name}".`);
+		}, () => {
+			this.toastService.addToast(`Unable to import the mappool with the id "${this.mappoolId}".`, ToastType.Error);
 		});
 	}
 }

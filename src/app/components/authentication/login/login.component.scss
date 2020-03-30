@@ -12,27 +12,27 @@ $background-color:          #3C4452;
         margin-top: 18px;
         margin-right: 18px;
         padding: 18px;
-    
+
         background-color: #4C5769;
         border: 1px solid darken($background-color, 15%);
         -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
         -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
         box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
-    
+
         .header {
             display: flex;
             justify-content: center;
-    
+
             .header-image {
                 width:              $sidebar-logo-width;
                 height:             $sidebar-logo-width;
                 line-height:        $sidebar-logo-width;
 
                 margin-bottom:      8px;
-                
+
                 border-radius:      50%;
                 border:             1px solid $sidebar-hr-color;
-    
+
                 background-repeat:  no-repeat;
                 background-size:    cover;
                 background-image:   url("assets/images/icon.png");
@@ -43,20 +43,24 @@ $background-color:          #3C4452;
             margin-bottom: 16px;
             text-align: center;
         }
-    
+
         .body {
             .spacing {
                 margin-top: 18px;
             }
-    
+
+            .center-text {
+                text-align: center;
+            }
+
             .center {
                 display: flex;
                 justify-content: center;
-    
+
                 .custom-btn {
                     padding-left: 48px;
                     padding-right: 48px;
-    
+
                     border-radius: 50px;
                 }
             }
@@ -68,27 +72,27 @@ $background-color:          #3C4452;
 
         margin-top: 18px;
         padding: 18px;
-    
+
         background-color: #4C5769;
         border: 1px solid darken($background-color, 15%);
         -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
         -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
         box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.75);
-    
+
         .header {
             display: flex;
             justify-content: center;
-    
+
             margin-bottom:      8px;
-    
+
             .header-image {
                 width:              $sidebar-logo-width;
                 height:             $sidebar-logo-width;
                 line-height:        $sidebar-logo-width;
-                
+
                 border-radius:      50%;
                 border:             1px solid $sidebar-hr-color;
-    
+
                 background-repeat:  no-repeat;
                 background-size:    cover;
                 background-image:   url("assets/images/osulogo.png");
@@ -99,7 +103,7 @@ $background-color:          #3C4452;
             margin-bottom: 16px;
             text-align: center;
         }
-    
+
         .body {
             .spacing {
                 margin-top: 18px;
@@ -108,15 +112,15 @@ $background-color:          #3C4452;
             .center-text {
                 text-align: center;
             }
-    
+
             .center {
                 display: flex;
                 justify-content: center;
-    
+
                 .custom-btn {
                     padding-left: 48px;
                     padding-right: 48px;
-    
+
                     border-radius: 50px;
                 }
             }
@@ -126,7 +130,7 @@ $background-color:          #3C4452;
 
 @media only screen and (max-width: 1000px) {
     .login-container {
-        display: block; 
+        display: block;
 
         .login {
             width: 100%;
