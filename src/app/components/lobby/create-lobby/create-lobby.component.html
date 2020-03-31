@@ -21,23 +21,19 @@
                 Invalid multiplayer link given. <br /><b>Accepted format:</b> https://osu.ppy.sh/community/matches/46358686
             </div>
 
-            <h2>Tournament acronym</h2>
+            <h2>Tournament</h2>
             <div>
-                Enter an acronym that will be used to create the multiplayer match.
+				Select a tournament for which you will be making a multiplayer match for.
             </div>
 
             <div class="alert alert-danger">
-                You only have to fill in the tournament acronym when you want to create a <b>NEW</b> multiplayer lobby on osu!.
-            </div>
+                You only have to select a tournament when you want to create a <b>NEW</b> multiplayer lobby on osu!.
+			</div>
 
-            <input formControlName="tournamentAcronym" type="text" class="form-control" placeholder="Tournament acronym"
-                    [ngClass]="{'has-error': getValidation('tournamentAcronym').errors && (getValidation('tournamentAcronym').touched || getValidation('tournamentAcronym').dirty)}" />
-
-            <div class="has-error"
-                *ngIf="getValidation('tournamentAcronym').errors && getValidation('tournamentAcronym').errors.maxlength &&
-                        (getValidation('tournamentAcronym').touched || getValidation('tournamentAcronym').dirty)">
-                The tournament acronym can have a maximum of 5 characters
-            </div>
+			<select class="form-control" formControlName="selectedTournament" (change)="changeTournament()">
+				<option></option>
+				<option *ngFor="let tournament of tournamentService.allTournaments" [value]="tournament.tournamentName">{{ tournament.tournamentName }}</option>
+			</select>
         </div>
 
         <hr />
@@ -80,33 +76,33 @@
             <div class="teamOne form-group">
                 <h2>Team one name</h2>
                 <p>
-                    Enter the name of the first team. This will be team <span class="red-text">red</span> and has slot {{ teamOneArray.join(", ") }}.
-                </p>
+                    Select the first team. This will be team <span class="red-text">red</span> and has slot {{ teamOneArray.join(", ") }}.
+				</p>
 
-                <input formControlName="teamOneName" type="text" class="form-control" placeholder="Team one name"
-                        [ngClass]="{'has-error': getValidation('teamOneName').errors && (getValidation('teamOneName').touched || getValidation('teamOneName').dirty)  }" />
+				<div class="alert alert-warning" *ngIf="!selectedTournament">
+					You have to select a tournament first in order to select a team.
+				</div>
 
-                <div class="has-error"
-                    *ngIf="getValidation('teamOneName').errors && getValidation('teamOneName').errors.required &&
-                        (getValidation('teamOneName').touched || getValidation('teamOneName').dirty)">
-                    This field is required
-                </div>
+				<select class="form-control" formControlName="teamOneName" *ngIf="selectedTournament">
+					<option></option>
+					<option *ngFor="let team of selectedTournament.teams" [value]="team.teamName">{{ team.teamName }}</option>
+				</select>
             </div>
 
             <div class="teamTwo form-group">
                 <h2>Team two name</h2>
                 <p>
-                    Enter the name of the second team. This will be team <span class="blue-text">blue</span> and has slot {{ teamTwoArray.join(", ") }}.
-                </p>
+                    Select the second team. This will be team <span class="blue-text">blue</span> and has slot {{ teamTwoArray.join(", ") }}.
+				</p>
 
-                <input formControlName="teamTwoName" type="text" class="form-control" placeholder="Team two name"
-                        [ngClass]="{'has-error': getValidation('teamTwoName').errors && (getValidation('teamTwoName').touched || getValidation('teamTwoName').dirty)  }" />
+				<div class="alert alert-warning" *ngIf="!selectedTournament">
+					You have to select a tournament first in order to select a team.
+				</div>
 
-                <div class="has-error"
-                    *ngIf="getValidation('teamTwoName').errors && getValidation('teamTwoName').errors.required &&
-                        (getValidation('teamTwoName').touched || getValidation('teamTwoName').dirty)">
-                    This field is required
-                </div>
+                <select class="form-control" formControlName="teamTwoName" *ngIf="selectedTournament">
+					<option></option>
+					<option *ngFor="let team of selectedTournament.teams" [value]="team.teamName">{{ team.teamName }}</option>
+				</select>
             </div>
 		</div>
 

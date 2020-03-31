@@ -11,7 +11,7 @@ import { MessageBuilder, MessageType } from '../models/irc/message-builder';
 import { MultiplayerLobbiesService } from './multiplayer-lobbies.service';
 import { Misc } from '../models/misc';
 import { ModBracket } from '../models/osu-mappool/mod-bracket';
-import { TeamService } from './team.service';
+import { TournamentService } from './tournaments.service';
 
 @Injectable({
   	providedIn: 'root'
@@ -43,7 +43,7 @@ export class IrcService {
 	// Indicates if the multiplayerlobby is being created for "Create a lobby" route
 	isCreatingMultiplayerLobby: number = -1;
 
-  	constructor(private toastService: ToastService, private storeService: StoreService, private multiplayerLobbiesService: MultiplayerLobbiesService, private teamService: TeamService) { 
+  	constructor(private toastService: ToastService, private storeService: StoreService, private multiplayerLobbiesService: MultiplayerLobbiesService, private tournamentService: TournamentService) {
 		this.irc = require('irc-upd');
 
 		// Create observables for is(Dis)Connecting
@@ -135,8 +135,8 @@ export class IrcService {
 	 */
 	connect(username: string, password: string) {
 		let ircSettings = {
-			password: password, 
-			autoConnect: false, 
+			password: password,
+			autoConnect: false,
 			autoRejoin: true,
 			debug: false,
 			showErrors: false
@@ -149,7 +149,7 @@ export class IrcService {
 			ircSettings['channels'] = [];
 
 			for(let channel in allJoinedChannels) {
-				ircSettings['channels'].push(allJoinedChannels[channel].name);	
+				ircSettings['channels'].push(allJoinedChannels[channel].name);
 			}
 		}
 
@@ -223,7 +223,7 @@ export class IrcService {
 				// =============================================
 				// The messages were send in a multiplayer lobby
 				if(to.startsWith('#mp_')) {
-					const 	multiplayerInitialization = Regex.multiplayerInitialization.run(message), 
+					const 	multiplayerInitialization = Regex.multiplayerInitialization.run(message),
 							multiplayerMatchSize = Regex.multiplayerMatchSize.run(message),
 							multiplayerSettingsChange = Regex.multiplayerSettingsChange.run(message),
 							matchClosed = Regex.closedMatch.run(message),
@@ -310,19 +310,21 @@ export class IrcService {
 						const 	multiplayerLobby = this.multiplayerLobbiesService.getByIrcLobby(to),
 								misc = new Misc();
 
-						let modBracket: ModBracket = null, 
+						let modBracket: ModBracket = null,
 							modBracketString: string[] = [];
 
 						// Check if a captain used the command
 
 						const totalMapsPlayed = multiplayerLobby.teamOneScore + multiplayerLobby.teamTwoScore;
 						let allowedToPick = false,
-							teamPick: string, 
+							teamPick: string,
 							teamCaptain: string;
+
+						let thisTournament = this.tournamentService.getTournamentByAcronym(multiplayerLobby.tournamentAcronym);
 
 						// Check the pick order
 						if(totalMapsPlayed % 2 == 0) {
-							if(this.teamService.getTeamByName(multiplayerLobby.firstPick).getPlayersAsArray().indexOf(from) > -1) {
+							if(this.tournamentService.getTeamFromTournamentByName(thisTournament, multiplayerLobby.firstPick).getPlayersAsArray().indexOf(from) > -1) {
 								allowedToPick = true;
 							}
 
@@ -330,7 +332,7 @@ export class IrcService {
 							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamOneCaptain : multiplayerLobby.teamTwoCaptain;
 						}
 						else {
-							if(this.teamService.getTeamByName(multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName).getPlayersAsArray().indexOf(from) > -1) {
+							if(this.tournamentService.getTeamFromTournamentByName(thisTournament, multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName).getPlayersAsArray().indexOf(from) > -1) {
 								allowedToPick = true;
 							}
 
@@ -346,7 +348,7 @@ export class IrcService {
 
 						// Check if the message came from a captain
 						if(from == multiplayerLobby.teamOneCaptain || from == multiplayerLobby.teamTwoCaptain) {
-							// Check if the map has been played 
+							// Check if the map has been played
 							let totalMapsPicked = 0;
 
 							for(let bracket in multiplayerLobby.picks) {
@@ -364,23 +366,23 @@ export class IrcService {
 										if(bracket.bracketName.toLowerCase() == userPicksMap.bracket.toLowerCase()) {
 											modBracket = bracket;
 										}
-	
+
 										modBracketString.push(bracket.bracketName);
 									}
-	
+
 									// The bracket was found
 									if(modBracket != null) {
 										const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
-	
+
 										// Mappool bracket still has a map available
 										if(randomMap != null) {
 											this.sendMessage(to, `!mp map ${randomMap.beatmapId} ${randomMap.gamemodeId}`);
-									
+
 											// Reset all mods if the freemod is being enabled
 											if(modBracket.mods.includes('freemod')) {
 												this.sendMessage(to, '!mp mods none');
 											}
-									
+
 											this.sendMessage(to, `${modBracket.mods}`);
 										}
 										// No maps left
@@ -473,7 +475,7 @@ export class IrcService {
 
 	/**
 	 * Add a message to the given channel. Will not send the message to irc
-	 * @param channelName the channel to add the message to 
+	 * @param channelName the channel to add the message to
 	 * @param author the author of the message
 	 * @param message the message itself
 	 * @param isPM if the message came from a PM
@@ -491,7 +493,7 @@ export class IrcService {
 			}
 
 			newMessage = new Message(Object.keys(this.getChannelByName(author).allMessages).length + 1, dateFormat, timeFormat, author, this.buildMessage(message), false);
-			
+
 			this.getChannelByName(author).allMessages.push(newMessage);
 			this.getChannelByName(author).hasUnreadMessages = true;
 			this.saveMessageToHistory(author, newMessage);
@@ -550,11 +552,11 @@ export class IrcService {
 					lastActiveChannel: false,
 					isPrivateChannel: false
 				});
-	
+
 				this.isJoiningChannel$.next(false);
-	
+
 				this.allChannels.push(new Channel(channelName));
-	
+
 				this.toastService.addToast(`Joined channel "${channelName}".`);
 			});
 		}
@@ -615,7 +617,7 @@ export class IrcService {
 
 		this.storeService.set('irc.channels', rearrangedChannels);
 	}
-	
+
 	/**
 	 * Change the last active status in the store for the given channel
 	 * @param channel the channel to change the status of

@@ -1,0 +1,36 @@
+<div class="scroll">
+    <div class="row">
+        <div class="col-7">
+            <button [routerLink]="['/tournaments-create']" class="btn btn-primary mt-4">Create a new tournament</button>
+        </div>
+
+        <div class="col-5">
+            <div class="input-group mt-4">
+                <input type="text" class="form-control" placeholder="Publish id" [(ngModel)]="tournamentPublishid" />
+
+                <div class="input-group-append">
+                    <button class="btn btn-primary" (click)="importTeams()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="tournament" *ngFor="let tournament of tournamentService.allTournaments">
+        <div class="row">
+            <div class="col-9">
+                <h1>{{ tournament.tournamentName }}</h1>
+
+                <div class="player" *ngFor="let team of tournament.getTeams()">{{ team.teamName }}</div>
+            </div>
+
+            <div class="col-3">
+                <div class="btn-group float-right">
+					<button class="btn btn-primary" (click)="publishTournament(tournament)" *ngIf="canPublish()">Publish</button>
+                    <button class="btn btn-danger" (click)="deleteTournament(tournament)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

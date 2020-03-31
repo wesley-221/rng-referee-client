@@ -128,7 +128,7 @@
                                 <select class="form-control" [(ngModel)]="selectedLobby.teamOneCaptain">
                                     <option value=""></option>
 
-                                    <option [value]="user" *ngFor="let user of selectedLobby.allUsers">{{ user }}</option>
+                                    <option [value]="user" *ngFor="let user of selectedLobby.teamOnePlayers">{{ user }}</option>
                                 </select>
                             </div>
 
@@ -136,7 +136,7 @@
                                 <select class="form-control" [(ngModel)]="selectedLobby.teamTwoCaptain">
                                     <option value=""></option>
 
-                                    <option [value]="user" *ngFor="let user of selectedLobby.allUsers">{{ user }}</option>
+                                    <option [value]="user" *ngFor="let user of selectedLobby.teamTwoPlayers">{{ user }}</option>
                                 </select>
                             </div>
                         </div>

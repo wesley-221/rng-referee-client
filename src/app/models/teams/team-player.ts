@@ -9,5 +9,11 @@ export class TeamPlayer {
         newTeamPlayer.username = teamPlayer.username;
 
         return newTeamPlayer;
-    }
+	}
+
+	convertToJson() {
+		return {
+			username: this.username
+		}
+	}
 }

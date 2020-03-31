@@ -38,10 +38,9 @@ import { AuthInterceptor } from "./components/authentication/token-interceptor";
 import { IrcComponent } from './components/irc/irc.component';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { SearchPipe } from './pipes/search.pipe';
-import { TeamOverviewComponent } from './components/teams/team-overview/team-overview.component';
-import { TeamCreateComponent } from './components/teams/team-create/team-create.component';
-import { TeamEditComponent } from './components/teams/team-edit/team-edit.component';
 import { RegisterComponent } from './components/authentication/register/register.component';
+import { TournamentCreateComponent } from './components/tournaments/tournament-create/tournament-create.component';
+import { TournamentOverviewComponent } from './components/tournaments/tournament-overview/tournament-overview.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -66,7 +65,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 		MappoolBracketEditComponent,
 		LoginComponent,
 		IrcComponent,
-		SearchPipe, TeamOverviewComponent, TeamCreateComponent, TeamEditComponent, RegisterComponent
+		SearchPipe, RegisterComponent, TournamentCreateComponent, TournamentOverviewComponent
 	],
 	imports: [
 		BrowserModule,

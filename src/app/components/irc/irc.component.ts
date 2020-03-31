@@ -13,6 +13,7 @@ import { MultiplayerLobby } from '../../models/store-multiplayer/multiplayer-lob
 import { Misc } from '../../models/misc';
 import { ToastService } from '../../services/toast.service';
 import { Router } from '@angular/router';
+import { TournamentService } from '../../services/tournaments.service';
 declare var $: any;
 
 @Component({
@@ -55,7 +56,7 @@ export class IrcComponent implements OnInit {
 	popupBannedMap: ModBracketMap = new ModBracketMap();
 	popupBannedBracket: ModBracket = new ModBracket();
 
-	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, public multiplayerLobbiesServce: MultiplayerLobbiesService, private toastService: ToastService, private router: Router) {
+	constructor(public electronService: ElectronService, public ircService: IrcService, private changeDetector: ChangeDetectorRef, public mappoolService: MappoolService, public multiplayerLobbiesServce: MultiplayerLobbiesService, private toastService: ToastService, private router: Router, private tournamentService: TournamentService) {
 		this.channels = ircService.allChannels;
 
 		this.ircService.getIsAuthenticated().subscribe(isAuthenticated => {
@@ -109,6 +110,17 @@ export class IrcComponent implements OnInit {
 
 		this.selectedChannel.lastActiveChannel = true;
 		this.ircService.changeLastActiveChannel(this.selectedChannel, true);
+
+		this.selectedLobby.teamOnePlayers = [];
+		this.selectedLobby.teamTwoPlayers = [];
+
+		for(let user of this.tournamentService.getTeamFromTournamentByName(this.tournamentService.getTournamentByAcronym(this.selectedLobby.tournamentAcronym), this.selectedLobby.teamOneName).getPlayers()) {
+			this.selectedLobby.teamOnePlayers.push(user.username);
+		}
+
+		for(let user of this.tournamentService.getTeamFromTournamentByName(this.tournamentService.getTournamentByAcronym(this.selectedLobby.tournamentAcronym), this.selectedLobby.teamTwoName).getPlayers()) {
+			this.selectedLobby.teamTwoPlayers.push(user.username);
+		}
 
 		this.selectedChannel.hasUnreadMessages = false;
 

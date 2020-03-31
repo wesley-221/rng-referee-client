@@ -4,6 +4,8 @@ import { MultiplayerLobbiesService } from '../../../services/multiplayer-lobbies
 import { ToastService } from '../../../services/toast.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { IrcService } from '../../../services/irc.service';
+import { TournamentService } from '../../../services/tournaments.service';
+import { Tournament } from '../../../models/tournament';
 
 @Component({
 	selector: 'app-create-lobby',
@@ -17,6 +19,7 @@ export class CreateLobbyComponent implements OnInit {
 	multiplayerLobby: string;
 	tournamentAcronym: string;
 	matchDescription: string;
+	selectedTournament: Tournament;
 
 	validationForm: FormGroup;
 	lobbyHasBeenCreated: boolean = false;
@@ -26,20 +29,18 @@ export class CreateLobbyComponent implements OnInit {
 	teamOneArray: number[] = [];
 	teamTwoArray: number[] = [];
 
-	constructor(private multiplayerLobbies: MultiplayerLobbiesService, private toastService: ToastService, private ircService: IrcService) { 
+	constructor(private multiplayerLobbies: MultiplayerLobbiesService, private toastService: ToastService, private ircService: IrcService, public tournamentService: TournamentService) {
 		ircService.getIsAuthenticated().subscribe(isAuthenticated => {
 			this.ircAuthenticated = isAuthenticated;
 		});
 	}
 
-	ngOnInit() { 
+	ngOnInit() {
 		this.validationForm = new FormGroup({
 			'multiplayerLink': new FormControl('', [
 				Validators.pattern(/https\:\/\/osu.ppy.sh\/community\/matches\/[0-9]+/)
 			]),
-			'tournamentAcronym': new FormControl('', [
-				Validators.maxLength(5)
-			]),
+			'selectedTournament': new FormControl(''),
 			'teamSize': new FormControl('', [
 				Validators.required,
 				Validators.min(1),
@@ -56,17 +57,21 @@ export class CreateLobbyComponent implements OnInit {
 		});
 	}
 
+	changeTournament() {
+		this.selectedTournament = this.tournamentService.getTournamentByName(this.validationForm.get('selectedTournament').value);
+	}
+
 	createLobby() {
 		const newLobby = new MultiplayerLobby();
-		
+
 		newLobby.lobbyId = this.multiplayerLobbies.availableLobbyId;
 		newLobby.teamOneName = this.validationForm.get('teamOneName').value;
 		newLobby.teamTwoName = this.validationForm.get('teamTwoName').value;
 		newLobby.teamSize = this.validationForm.get('teamSize').value;
 		newLobby.multiplayerLink = this.validationForm.get('multiplayerLink').value;
-		newLobby.tournamentAcronym = this.validationForm.get('tournamentAcronym').value;
 		newLobby.description = `${this.validationForm.get('teamOneName').value} vs ${this.validationForm.get('teamTwoName').value}`;
 		newLobby.webhook = this.validationForm.get('webhook').value;
+		newLobby.tournamentAcronym = this.tournamentService.getTournamentByName(this.validationForm.get('selectedTournament').value).acronym;
 
 		if(newLobby.multiplayerLink == '') {
 			this.ircService.isCreatingMultiplayerLobby = newLobby.lobbyId;

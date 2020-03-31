@@ -1,7 +1,8 @@
 import { TeamPlayer } from "./team-player";
 
 export class Team {
-    teamName: string;
+	teamName: string;
+	collapsed: boolean = false;
     private teamPlayers: TeamPlayer[];
 
     constructor() {
@@ -17,7 +18,7 @@ export class Team {
 
     /**
      * Add a player to the team
-     * @param teamPlayer 
+     * @param teamPlayer
      */
     public addPlayer(teamPlayer: TeamPlayer): void {
         this.teamPlayers.push(teamPlayer);
@@ -25,7 +26,7 @@ export class Team {
 
     /**
      * Remove a player from the team
-     * @param teamPlayer 
+     * @param teamPlayer
      */
     public removePlayer(teamPlayer: TeamPlayer): void {
         this.teamPlayers.splice(this.teamPlayers.indexOf(teamPlayer), 1);
@@ -52,7 +53,20 @@ export class Team {
         for(let player in team.teamPlayers) {
             newTeam.addPlayer(TeamPlayer.makeTrueCopy(team.teamPlayers[player]));
         }
-        
+
         return newTeam;
-    }
+	}
+
+	convertToJson() {
+		let team = {
+			teamName: this.teamName,
+			teamPlayers: []
+		}
+
+		for(let player in this.teamPlayers) {
+			team.teamPlayers.push(this.teamPlayers[player].convertToJson());
+		}
+
+		return team;
+	}
 }

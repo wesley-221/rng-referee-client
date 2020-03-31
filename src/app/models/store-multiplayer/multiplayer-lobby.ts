@@ -34,9 +34,12 @@ export class MultiplayerLobby {
     allUsers: string[] = [];
 
     teamOneCaptain: string;
-    teamTwoCaptain: string;
+	teamTwoCaptain: string;
 
-    constructor() { 
+	teamOnePlayers: string[] = [];
+	teamTwoPlayers: string[] = [];
+
+    constructor() {
         this.multiplayerData = [];
     }
 
@@ -49,7 +52,7 @@ export class MultiplayerLobby {
         return false;
     }
 
-    updateMpData(multiplayerData: MultiplayerData): void {        
+    updateMpData(multiplayerData: MultiplayerData): void {
         for(let mpData in this.multiplayerData) {
             if(this.multiplayerData[mpData].game_id == multiplayerData.game_id) {
                 this.multiplayerData[mpData] = multiplayerData;
@@ -79,7 +82,7 @@ export class MultiplayerLobby {
         this.teamOneBans = json.data.teamOneBans;
         this.teamTwoBans = json.data.teamTwoBans;
         this.picks = json.data.picks;
-       
+
         this.firstPick = json.data.firstPick;
         this.bestOf = json.data.bestOf;
 
@@ -154,9 +157,9 @@ export class MultiplayerLobby {
             "multiplayerData": { }
         };
 
-        if(multiplayerLobby.mapsCountTowardScore !== undefined) 
+        if(multiplayerLobby.mapsCountTowardScore !== undefined)
             lobby.countForScore = multiplayerLobby.mapsCountTowardScore;
-        
+
         for(let match in multiplayerLobby.multiplayerData) {
             const currentMatch = multiplayerLobby.multiplayerData[match];
             lobby.multiplayerData[currentMatch.game_id] = { };

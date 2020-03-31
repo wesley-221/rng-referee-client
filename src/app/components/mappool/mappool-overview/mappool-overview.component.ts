@@ -40,7 +40,7 @@ export class MappoolOverviewComponent implements OnInit {
 	}
 
 	canPublish() {
-		return this.authService.loggedIn && (<any>this.authService.loggedInUser.isAdmin) == 'true';
+		return this.authService.loggedIn && ((<any>this.authService.loggedInUser.isAdmin) == 'true' || this.authService.loggedInUser.isAdmin == true);
 	}
 
 	/**
