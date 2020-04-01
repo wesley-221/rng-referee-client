@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TournamentService } from '../../../services/tournaments.service';
 import { Tournament } from '../../../models/tournament';
 import { AuthenticateService } from '../../../services/authenticate.service';
+import { ToastType } from '../../../models/toast';
 
 @Component({
 	selector: 'app-tournament-overview',
@@ -18,7 +19,16 @@ export class TournamentOverviewComponent implements OnInit {
 
 	ngOnInit() { }
 
-	importTeams() { }
+	importTeam() {
+		this.tournamentService.getPublishedTournament(this.tournamentPublishid).subscribe((data) => {
+			const newTournament: Tournament = this.tournamentService.mapFromJson(data);
+
+			this.tournamentService.addTournament(newTournament);
+			this.toastService.addToast(`Imported the tournament "${newTournament.tournamentName}".`);
+		}, () => {
+			this.toastService.addToast(`Unable to import the tournament with the id "${this.tournamentPublishid}".`, ToastType.Error);
+		});
+	}
 
 	deleteTournament(tournament: Tournament) {
 		if(confirm(`Are you sure you want to delete the tournament "${tournament.tournamentName}"?`)) {
@@ -41,9 +51,9 @@ export class TournamentOverviewComponent implements OnInit {
 	 */
 	publishTournament(tournament: Tournament) {
 		if(confirm(`Are you sure you want to publish "${tournament.tournamentName}"?`)) {
-			// this.tournamentService.publishTournament(tournament).subscribe((data) => {
-			// 	// this.toastService.addToast(`Successfully published the mappool "${data.body.name}" with the id ${data.body.id}.`);
-			// });
+			this.tournamentService.publishTournament(tournament).subscribe((data) => {
+				this.toastService.addToast(`Successfully published the tournament "${data.body.tournamentName}" with the id ${data.body.id}.`);
+			});
 		}
 	}
 }

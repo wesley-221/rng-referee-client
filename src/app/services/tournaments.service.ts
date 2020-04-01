@@ -3,15 +3,20 @@ import { StoreService } from './store.service';
 import { Tournament } from '../models/tournament';
 import { Team } from '../models/teams/team';
 import { TeamPlayer } from '../models/teams/team-player';
+import { HttpClient } from '@angular/common/http';
+import { AppConfig } from '../../environments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
 })
 
 export class TournamentService {
+	private readonly apiUrl = AppConfig.apiUrl;
+
 	allTournaments: Tournament[];
 
-	constructor(private storeService: StoreService) {
+	constructor(private storeService: StoreService, private httpClient: HttpClient) {
 		this.allTournaments = [];
 
 		const allTournamentsCache = this.storeService.get(`cache.tournaments`);
@@ -112,5 +117,48 @@ export class TournamentService {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Publish a tournament
+	 * @param tournament the tournament to publish
+	 */
+	publishTournament(tournament: Tournament): Observable<any> {
+		return this.httpClient.post<Tournament>(`${this.apiUrl}tournament/create`, tournament, { observe : "response" });
+	}
+
+	/**
+	 * Get a published tournament by tournament id
+	 * @param tournamentId the id of the tournament that was published
+	 */
+	getPublishedTournament(tournamentId: number): Observable<Tournament> {
+		return this.httpClient.get<Tournament>(`${this.apiUrl}tournament/get/${tournamentId}`);
+	}
+
+	/**
+	 * Map the given json to a tournament object
+	 * @param json the json to map
+	 */
+	mapFromJson(json: any) {
+		const newTournament = new Tournament();
+
+		newTournament.tournamentName = json.tournamentName;
+		newTournament.acronym = json.acronym;
+
+		for(let team in json.teams) {
+			const newTeam = new Team();
+			newTeam.teamName = json.teams[team].teamName;
+
+			for(let player in json.teams[team].teamPlayers) {
+				const newPlayer = new TeamPlayer();
+				newPlayer.username = json.teams[team].teamPlayers[player].username;
+
+				newTeam.addPlayer(newPlayer);
+			}
+
+			newTournament.addTeam(newTeam);
+		}
+
+		return newTournament;
 	}
 }
