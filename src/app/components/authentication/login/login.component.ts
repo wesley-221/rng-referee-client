@@ -70,6 +70,7 @@ export class LoginComponent implements OnInit {
 			loggedInUser.userId = data.body.userId;
 			loggedInUser.username = data.body.username;
 			loggedInUser.isAdmin = data.body.admin;
+			loggedInUser.isTournamentHost = data.body.tournament_host;
 			loggedInUser.token = data.headers.get('Authorization');
 
 			this.auth.loggedInUser = loggedInUser;
