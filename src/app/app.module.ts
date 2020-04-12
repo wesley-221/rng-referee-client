@@ -41,6 +41,7 @@ import { SearchPipe } from './pipes/search.pipe';
 import { RegisterComponent } from './components/authentication/register/register.component';
 import { TournamentCreateComponent } from './components/tournaments/tournament-create/tournament-create.component';
 import { TournamentOverviewComponent } from './components/tournaments/tournament-overview/tournament-overview.component';
+import { TournamentEditComponent } from './components/tournaments/tournament-edit/tournament-edit.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -65,7 +66,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 		MappoolBracketEditComponent,
 		LoginComponent,
 		IrcComponent,
-		SearchPipe, RegisterComponent, TournamentCreateComponent, TournamentOverviewComponent
+		SearchPipe, RegisterComponent, TournamentCreateComponent, TournamentOverviewComponent, TournamentEditComponent
 	],
 	imports: [
 		BrowserModule,

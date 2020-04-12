@@ -15,6 +15,7 @@ import { IrcComponent } from './components/irc/irc.component';
 import { RegisterComponent } from './components/authentication/register/register.component';
 import { TournamentOverviewComponent } from './components/tournaments/tournament-overview/tournament-overview.component';
 import { TournamentCreateComponent } from './components/tournaments/tournament-create/tournament-create.component';
+import { TournamentEditComponent } from './components/tournaments/tournament-edit/tournament-edit.component';
 
 const routes: Routes = [
 	{
@@ -34,6 +35,7 @@ const routes: Routes = [
 			{ path: 'edit-bracket/:mappoolId/:bracketId', component: MappoolBracketEditComponent },
 			{ path: 'tournaments', component: TournamentOverviewComponent },
 			{ path: 'tournaments-create', component: TournamentCreateComponent },
+			{ path: 'edit-tournament/:tournamentId', component: TournamentEditComponent },
 			{ path: 'irc', component: IrcComponent },
 			{ path: '**', component: ErrorComponent }
 		]

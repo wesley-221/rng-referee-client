@@ -111,15 +111,17 @@ export class IrcComponent implements OnInit {
 		this.selectedChannel.lastActiveChannel = true;
 		this.ircService.changeLastActiveChannel(this.selectedChannel, true);
 
-		this.selectedLobby.teamOnePlayers = [];
-		this.selectedLobby.teamTwoPlayers = [];
+		if(channel.startsWith('#mp_')) {
+			this.selectedLobby.teamOnePlayers = [];
+			this.selectedLobby.teamTwoPlayers = [];
 
-		for(let user of this.tournamentService.getTeamFromTournamentByName(this.tournamentService.getTournamentByAcronym(this.selectedLobby.tournamentAcronym), this.selectedLobby.teamOneName).getPlayers()) {
-			this.selectedLobby.teamOnePlayers.push(user.username);
-		}
+			for(let user of this.tournamentService.getTeamFromTournamentByName(this.tournamentService.getTournamentByAcronym(this.selectedLobby.tournamentAcronym), this.selectedLobby.teamOneName).getPlayers()) {
+				this.selectedLobby.teamOnePlayers.push(user.username);
+			}
 
-		for(let user of this.tournamentService.getTeamFromTournamentByName(this.tournamentService.getTournamentByAcronym(this.selectedLobby.tournamentAcronym), this.selectedLobby.teamTwoName).getPlayers()) {
-			this.selectedLobby.teamTwoPlayers.push(user.username);
+			for(let user of this.tournamentService.getTeamFromTournamentByName(this.tournamentService.getTournamentByAcronym(this.selectedLobby.tournamentAcronym), this.selectedLobby.teamTwoName).getPlayers()) {
+				this.selectedLobby.teamTwoPlayers.push(user.username);
+			}
 		}
 
 		this.selectedChannel.hasUnreadMessages = false;
