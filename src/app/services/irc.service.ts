@@ -372,6 +372,23 @@ export class IrcService {
 
 									// The bracket was found
 									if(modBracket != null) {
+										// Tiebreaker check
+										const tiebreakerScore = Math.floor(multiplayerLobby.bestOf / 2)
+
+										// Tiebreaker time
+										if(tiebreakerScore == multiplayerLobby.teamOneScore && tiebreakerScore == multiplayerLobby.teamTwoScore) {
+											if(modBracket.bracketName.toLowerCase() != "tiebreaker") {
+												this.sendMessage(to, `You can no longer pick from the normal brackets, it is tiebreaker time! (!pick tiebreaker)`);
+												return;
+											}
+										}
+										else {
+											if(modBracket.bracketName.toLowerCase() == "tiebreaker") {
+												this.sendMessage(to, `The tiebreaker cannot be picked yet.`);
+												return;
+											}
+										}
+
 										const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
 
 										// Mappool bracket still has a map available
