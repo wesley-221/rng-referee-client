@@ -1,6 +1,6 @@
 {
 	"name": "rng-referee-client",
-	"version": "2.0.5",
+	"version": "2.0.6",
 	"description": "Referee client for RNG",
 	"author": {
 		"name": "Wesley"
