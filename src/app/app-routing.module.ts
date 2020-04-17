@@ -34,7 +34,7 @@ const routes: Routes = [
 			{ path: 'mappool-create', component: MappoolCreateComponent },
 			{ path: 'edit-bracket/:mappoolId/:bracketId', component: MappoolBracketEditComponent },
 			{ path: 'tournaments', component: TournamentOverviewComponent },
-			{ path: 'tournaments-create', component: TournamentCreateComponent },
+			{ path: 'tournament-create', component: TournamentCreateComponent },
 			{ path: 'edit-tournament/:tournamentId', component: TournamentEditComponent },
 			{ path: 'irc', component: IrcComponent },
 			{ path: '**', component: ErrorComponent }
