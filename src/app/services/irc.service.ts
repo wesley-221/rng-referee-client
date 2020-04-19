@@ -321,23 +321,28 @@ export class IrcService {
 							teamCaptain: string;
 
 						let thisTournament = this.tournamentService.getTournamentByAcronym(multiplayerLobby.tournamentAcronym);
+						let captainName = from;
+						captainName = captainName.replace(/_/g, ' ');
 
 						// Check the pick order
 						if(totalMapsPlayed % 2 == 0) {
-							if(this.tournamentService.getTeamFromTournamentByName(thisTournament, multiplayerLobby.firstPick).getPlayersAsArray().indexOf(from) > -1) {
+							if(this.tournamentService.getTeamFromTournamentByName(thisTournament, multiplayerLobby.firstPick).getPlayersAsArray().indexOf(captainName) > -1) {
 								allowedToPick = true;
 							}
 
+							console.log(allowedToPick)
+
 							teamPick = multiplayerLobby.firstPick;
-							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamOneCaptain : multiplayerLobby.teamTwoCaptain;
+							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamOneCaptain.replace(/ /g, '_') : multiplayerLobby.teamTwoCaptain.replace(/ /g, '_');
 						}
 						else {
-							if(this.tournamentService.getTeamFromTournamentByName(thisTournament, multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName).getPlayersAsArray().indexOf(from) > -1) {
+							console.log('second clause');
+							if(this.tournamentService.getTeamFromTournamentByName(thisTournament, multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName).getPlayersAsArray().indexOf(captainName) > -1) {
 								allowedToPick = true;
 							}
 
 							teamPick = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoName : multiplayerLobby.teamOneName;
-							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoCaptain : multiplayerLobby.teamOneCaptain;
+							teamCaptain = multiplayerLobby.firstPick == multiplayerLobby.teamOneName ? multiplayerLobby.teamTwoCaptain.replace(/ /g, '_') : multiplayerLobby.teamOneCaptain.replace(/ /g, '_');
 						}
 
 						// Check if a captain is selected
@@ -347,7 +352,7 @@ export class IrcService {
 						}
 
 						// Check if the message came from a captain
-						if(from == multiplayerLobby.teamOneCaptain || from == multiplayerLobby.teamTwoCaptain) {
+						if(captainName == multiplayerLobby.teamOneCaptain || captainName == multiplayerLobby.teamTwoCaptain) {
 							// Check if the map has been played
 							let totalMapsPicked = 0;
 
