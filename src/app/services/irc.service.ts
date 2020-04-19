@@ -394,6 +394,12 @@ export class IrcService {
 											}
 										}
 
+										// Prevent teams from picking new maps after the game has been won
+										if(multiplayerLobby.teamOneScore >= tiebreakerScore + 1 || multiplayerLobby.teamTwoScore >= tiebreakerScore + 1) {
+											this.sendMessage(to, `The game has already been won, you can no longer pick maps.`);
+											return;
+										}
+
 										const randomMap = misc.staticPickRandomMap(this.multiplayerLobbiesService, multiplayerLobby, modBracket, to);
 
 										// Mappool bracket still has a map available
